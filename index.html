@@ -4996,8 +4996,7 @@
                 if (activeBtn) activeBtn.click();
             } catch (e) {
                 console.error('Failed to load snapshot:', e);
-                document.getElementById('error').style.display = 'block';
-                document.getElementById('error').textContent = 'Failed to load snapshot.';
+                // Suppress on-page error UI for snapshot mode
                 document.getElementById('loading').style.display = 'none';
             }
         }
