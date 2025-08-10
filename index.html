@@ -1042,6 +1042,551 @@
             gap: 5px;
         }
 
+        /* View Mode Toggle */
+        .view-toggle {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .view-toggle .toggle-btn {
+            padding: 8px 14px;
+            border-radius: 6px;
+            border: 1px solid rgba(57,112,181,0.4);
+            background: linear-gradient(45deg, #244C7E, #00897B);
+            color: #B4E0FF;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .view-toggle .toggle-btn.active {
+            background: linear-gradient(45deg, #3970B5, #26A69A);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(36, 76, 126, 0.3);
+        }
+        .view-toggle .toggle-btn:focus { outline: none; }
+
+        /* Mobile mode overrides */
+        body.mobile-mode .container { max-width: 480px; margin: 0 auto; padding: 10px; }
+        body.mobile-mode .header { padding: 12px; }
+        body.mobile-mode .tabs-header { overflow-x: auto; white-space: nowrap; }
+        body.mobile-mode .tab-button { padding: 10px 12px; font-size: 0.9rem; }
+        body.mobile-mode .subtabs-header { overflow-x: auto; white-space: nowrap; }
+        body.mobile-mode .subtab-button { padding: 8px 10px; font-size: 0.85rem; }
+        body.mobile-mode .chart-wrapper { height: 360px !important; max-width: 100% !important; }
+        body.mobile-mode .horizontal-sections-container { display: block; }
+        body.mobile-mode .horizontal-tournament-section { width: 100%; margin: 10px 0; }
+        body.mobile-mode table.data-table th, body.mobile-mode table.data-table td { padding: 6px; font-size: 12px; }
+        body.mobile-mode .standings-card { padding: 10px !important; }
+        body.mobile-mode #standings-grid { display: grid !important; grid-template-columns: 1fr !important; gap: 10px !important; }
+        body.mobile-mode .duel-of-fates-video { display: none !important; }
+
+        /* Utility visibility helpers for mobile/desktop within viz */
+        .desktop-only { display: inline; }
+        .mobile-only { display: none; }
+        #quantum-gauntlet-viz.is-mobile .desktop-only { display: none; }
+        #quantum-gauntlet-viz.is-mobile .mobile-only { display: inline; }
+
+        /* ==============================
+           Quantum Gauntlet: Mobile Mode
+           (scoped to #quantum-gauntlet-viz.is-mobile)
+           ============================== */
+        #quantum-gauntlet-viz.is-mobile {
+          --gutter: 12px;
+          --gutter-lg: 16px;
+          --card-pad: 12px;
+          --radius: 12px;
+          --fs-title: clamp(18px, 4vw, 22px);
+          --fs-sub: clamp(14px, 3.6vw, 16px);
+          --fs-body: clamp(13px, 3.4vw, 15px);
+        }
+
+        #quantum-gauntlet-viz.is-mobile .tournament-header,
+        #quantum-gauntlet-viz.is-mobile .phases-header,
+        #quantum-gauntlet-viz.is-mobile .horizontal-section-header,
+        #quantum-gauntlet-viz.is-mobile .column-header { padding: var(--card-pad); }
+
+        #quantum-gauntlet-viz.is-mobile .tournament-title { font-size: var(--fs-title); }
+        #quantum-gauntlet-viz.is-mobile .tournament-subtitle { font-size: var(--fs-sub); }
+
+        #quantum-gauntlet-viz.is-mobile .tournament-bracket,
+        #quantum-gauntlet-viz.is-mobile .horizontal-sections-container,
+        #quantum-gauntlet-viz.is-mobile .week13-horizontal-container,
+        #quantum-gauntlet-viz.is-mobile .playoff-horizontal-container,
+        #quantum-gauntlet-viz.is-mobile .duel-horizontal-container,
+        #quantum-gauntlet-viz.is-mobile .week16-container,
+        #quantum-gauntlet-viz.is-mobile .week17-container {
+          width: 100%;
+          max-width: 100%;
+          overflow-x: hidden;
+          padding: 0 var(--card-pad);
+          box-sizing: border-box;
+        }
+
+        #quantum-gauntlet-viz.is-mobile .horizontal-tournament-section {
+          display: block;
+          border-radius: var(--radius);
+          padding: var(--card-pad);
+          margin-bottom: var(--gutter-lg);
+        }
+
+        #quantum-gauntlet-viz.is-mobile .seeding-results-grid { display: grid; grid-template-columns: 1fr; gap: var(--gutter-lg); }
+        #quantum-gauntlet-viz.is-mobile .seed-category .seed-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--gutter); }
+        @media (max-width: 380px) { #quantum-gauntlet-viz.is-mobile .seed-category .seed-row { grid-template-columns: 1fr; } }
+        #quantum-gauntlet-viz.is-mobile .seed-box { min-width: 0; width: auto; padding: 10px; border-radius: var(--radius); }
+        #quantum-gauntlet-viz.is-mobile .seed-team,
+        #quantum-gauntlet-viz.is-mobile .seed-status,
+        #quantum-gauntlet-viz.is-mobile .participant-name { font-size: var(--fs-body); white-space: normal; word-break: break-word; }
+
+        #quantum-gauntlet-viz.is-mobile .horizontal-participant { display: grid; grid-template-columns: 1fr; gap: 8px; padding: 10px; border-radius: var(--radius); }
+        #quantum-gauntlet-viz.is-mobile .participant-header { display: flex; align-items: center; gap: 8px; }
+        #quantum-gauntlet-viz.is-mobile .participant-scoring { display: grid; grid-template-columns: auto auto auto auto; grid-template-areas: "w14 plus w15 equals" "total total total total"; gap: 6px 10px; align-items: center; }
+        #quantum-gauntlet-viz.is-mobile .participant-scoring .week-score:first-child { grid-area: w14; }
+        #quantum-gauntlet-viz.is-mobile .participant-scoring .score-plus { grid-area: plus; }
+        #quantum-gauntlet-viz.is-mobile .participant-scoring .week-score:nth-of-type(2) { grid-area: w15; }
+        #quantum-gauntlet-viz.is-mobile .participant-scoring .score-equals { grid-area: equals; }
+        #quantum-gauntlet-viz.is-mobile .participant-scoring .total-score { grid-area: total; justify-self: start; }
+        #quantum-gauntlet-viz.is-mobile .week-score .week-label,
+        #quantum-gauntlet-viz.is-mobile .total-score .total-label { font-size: var(--fs-sub); }
+
+        #quantum-gauntlet-viz.is-mobile .duel-horizontal-container { display: grid; grid-template-columns: 1fr; gap: var(--gutter); }
+        #quantum-gauntlet-viz.is-mobile .vs-indicator { order: 3; margin: 4px 0 0; text-align: center; }
+
+        #quantum-gauntlet-viz.is-mobile .playoff-competitors-grid { display: grid; grid-template-columns: 1fr; gap: var(--gutter); }
+        #quantum-gauntlet-viz.is-mobile .playoff-advancement .advancement-slots { display: grid; grid-template-columns: 1fr; gap: 8px; }
+
+        #quantum-gauntlet-viz.is-mobile .wildcard-competitors { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--gutter); }
+        @media (max-width: 380px) { #quantum-gauntlet-viz.is-mobile .wildcard-competitors { grid-template-columns: 1fr; } }
+
+        #quantum-gauntlet-viz.is-mobile .vertical-columns-container { display: grid; grid-template-columns: 1fr; gap: var(--gutter-lg); padding: 0 var(--card-pad); }
+        #quantum-gauntlet-viz.is-mobile .tournament-column { border-radius: var(--radius); padding: var(--card-pad); }
+
+        #quantum-gauntlet-viz.is-mobile .tournament-info-panel { position: fixed; left: 0; right: 0; bottom: 0; max-height: 70vh; transform: translateY(100%); transition: transform 200ms ease; overflow: auto; padding-bottom: max(16px, env(safe-area-inset-bottom)); z-index: 50; }
+        #quantum-gauntlet-viz.is-mobile .tournament-info-panel.is-open { transform: translateY(0); }
+
+        #quantum-gauntlet-viz.is-mobile .week-indicators,
+        #quantum-gauntlet-viz.is-mobile .advancement-explanation { display: flex; flex-wrap: wrap; gap: 6px; font-size: var(--fs-body); }
+
+        #quantum-gauntlet-viz.is-mobile .seed-box,
+        #quantum-gauntlet-viz.is-mobile .auto-playoff-participant,
+        #quantum-gauntlet-viz.is-mobile .wildcard-competitor,
+        #quantum-gauntlet-viz.is-mobile .conference-team,
+        #quantum-gauntlet-viz.is-mobile .championship-team,
+        #quantum-gauntlet-viz.is-mobile .advance-slot { width: 100%; max-width: 100%; box-sizing: border-box; }
+
+        #quantum-gauntlet-viz.is-mobile .horizontal-section-header h3,
+        #quantum-gauntlet-viz.is-mobile .column-header h3 { font-size: var(--fs-title); }
+        #quantum-gauntlet-viz.is-mobile p,
+        #quantum-gauntlet-viz.is-mobile li { font-size: var(--fs-body); line-height: 1.25; }
+        #quantum-gauntlet-viz.is-mobile .section-label,
+        #quantum-gauntlet-viz.is-mobile .champion-crown { font-size: clamp(18px, 5vw, 22px); }
+
+        /* Week 13 Results: make seeding grid vertical */
+        #quantum-gauntlet-viz.is-mobile .week13-horizontal-container .seeding-results-grid {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+        #quantum-gauntlet-viz.is-mobile .week13-horizontal-container .seed-category { width: 100%; }
+        #quantum-gauntlet-viz.is-mobile .week13-horizontal-container .seed-row {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+        #quantum-gauntlet-viz.is-mobile .week13-horizontal-container .seed-box { width: 100%; box-sizing: border-box; }
+
+        /* Week 14 + 15: stack like Week 16 */
+        #quantum-gauntlet-viz.is-mobile .duel-horizontal-container,
+        #quantum-gauntlet-viz.is-mobile .playoff-horizontal-container,
+        #quantum-gauntlet-viz.is-mobile .wildcard-competitors {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+        #quantum-gauntlet-viz.is-mobile .duel-participant,
+        #quantum-gauntlet-viz.is-mobile .auto-playoff-participant,
+        #quantum-gauntlet-viz.is-mobile .wildcard-competitor {
+          width: 100%;
+          box-sizing: border-box;
+        }
+        /* Center VS indicator/prize notes */
+        #quantum-gauntlet-viz.is-mobile .vs-indicator { align-self: center; text-align: center; }
+        /* Playoff advancement slots stacked */
+        #quantum-gauntlet-viz.is-mobile .playoff-advancement .advancement-slots {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+
+        /* ---------- MOBILE LAYOUT HARD LIMITS ---------- */
+        #quantum-gauntlet-viz.is-mobile {
+          --mobile-card-max: 560px;   /* match Week 16 visual width; adjust as needed */
+          --card-pad: 12px;
+        }
+
+        /* Force Week 13 + Week 14–15 sections to a centered card width (like Week 16) */
+        #quantum-gauntlet-viz.is-mobile .week13-horizontal-section,
+        #quantum-gauntlet-viz.is-mobile .simultaneous-phases-container,
+        #quantum-gauntlet-viz.is-mobile #duel-horizontal-section,
+        #quantum-gauntlet-viz.is-mobile #playoff-horizontal-section,
+        #quantum-gauntlet-viz.is-mobile #wildcard-horizontal-section {
+          max-width: var(--mobile-card-max);
+          margin-inline: auto;
+          padding-inline: var(--card-pad);
+          width: 100%;
+          box-sizing: border-box;
+        }
+
+        /* Kill any accidental sideways scroll at the root */
+        #quantum-gauntlet-viz.is-mobile,
+        #quantum-gauntlet-viz.is-mobile * { box-sizing: border-box; }
+        #quantum-gauntlet-viz.is-mobile { overflow-x: hidden; }
+
+        /* Week 13: stack categories and seed rows like cards */
+        #quantum-gauntlet-viz.is-mobile .week13-horizontal-container .seeding-results-grid {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 12px;
+        }
+        #quantum-gauntlet-viz.is-mobile .week13-horizontal-container .seed-category { width: 100%; }
+        #quantum-gauntlet-viz.is-mobile .week13-horizontal-container .seed-row { display: grid; grid-template-columns: 1fr; gap: 8px; }
+
+        /* Week 14–15 (Duel, Playoff): stack participants one-per-row */
+        #quantum-gauntlet-viz.is-mobile .duel-horizontal-container,
+        #quantum-gauntlet-viz.is-mobile .playoff-horizontal-container { display: grid; grid-template-columns: 1fr; gap: 12px; }
+
+        /* Wildcard competitors: single column by default */
+        #quantum-gauntlet-viz.is-mobile .wildcard-competitors { display: grid; grid-template-columns: 1fr; gap: 10px; }
+
+        /* Advancement slots as full-width stack */
+        #quantum-gauntlet-viz.is-mobile .playoff-advancement .advancement-slots { display: grid; grid-template-columns: 1fr; gap: 8px; }
+
+        /* Make all card children shrink within the card */
+        #quantum-gauntlet-viz.is-mobile .seed-box,
+        #quantum-gauntlet-viz.is-mobile .horizontal-participant,
+        #quantum-gauntlet-viz.is-mobile .auto-playoff-participant,
+        #quantum-gauntlet-viz.is-mobile .wildcard-competitor,
+        #quantum-gauntlet-viz.is-mobile .advance-slot,
+        #quantum-gauntlet-viz.is-mobile .conference-team,
+        #quantum-gauntlet-viz.is-mobile .championship-team {
+          min-width: 0;
+          max-width: 100%;
+          width: 100%;
+        }
+
+        /* Score rows: math on one row, total below */
+        #quantum-gauntlet-viz.is-mobile .participant-scoring {
+          display: grid;
+          grid-template-columns: auto auto auto auto;
+          grid-template-areas:
+            "w14 plus w15 equals"
+            "total total total total";
+          gap: 6px 10px;
+          align-items: center;
+        }
+        #quantum-gauntlet-viz.is-mobile .participant-scoring .week-score:first-child { grid-area: w14; }
+        #quantum-gauntlet-viz.is-mobile .participant-scoring .score-plus { grid-area: plus; }
+        #quantum-gauntlet-viz.is-mobile .participant-scoring .week-score:nth-of-type(2) { grid-area: w15; }
+        #quantum-gauntlet-viz.is-mobile .participant-scoring .score-equals { grid-area: equals; }
+        #quantum-gauntlet-viz.is-mobile .participant-scoring .total-score { grid-area: total; justify-self: start; }
+
+        /* Allow labels and long names to wrap */
+        #quantum-gauntlet-viz.is-mobile .seed-team,
+        #quantum-gauntlet-viz.is-mobile .seed-status,
+        #quantum-gauntlet-viz.is-mobile .participant-name,
+        #quantum-gauntlet-viz.is-mobile .week-indicators { white-space: normal; word-break: break-word; }
+
+        /* ===== MOBILE HARD CONSTRAINTS & OVERFLOW GUARD ===== */
+        html, body { width: 100%; max-width: 100%; overflow-x: hidden; }
+
+        #quantum-gauntlet-viz.is-mobile {
+          --mobile-card-max: 560px;    /* adjust to 520/500 if desired */
+          --pad-inline: 14px;
+          width: 100%;
+          max-width: 100vw;
+          margin: 0;
+          padding-inline: var(--pad-inline);
+          box-sizing: border-box;
+          overflow-x: hidden;
+        }
+
+        /* Main wrappers may not exceed viewport */
+        #quantum-gauntlet-viz.is-mobile .tournament-bracket,
+        #quantum-gauntlet-viz.is-mobile .week13-horizontal-section,
+        #quantum-gauntlet-viz.is-mobile .simultaneous-phases-container,
+        #quantum-gauntlet-viz.is-mobile #duel-horizontal-section,
+        #quantum-gauntlet-viz.is-mobile #playoff-horizontal-section,
+        #quantum-gauntlet-viz.is-mobile #wildcard-horizontal-section,
+        #quantum-gauntlet-viz.is-mobile .vertical-columns-container {
+          width: 100%;
+          max-width: min(var(--mobile-card-max), 100%);
+          margin-inline: auto;
+          padding-inline: 0;
+          box-sizing: border-box;
+          position: static !important;
+          transform: none !important;
+          left: auto !important;
+          right: auto !important;
+        }
+
+        /* Ensure all inner boxes shrink inside viewport */
+        #quantum-gauntlet-viz.is-mobile * { box-sizing: border-box; }
+        #quantum-gauntlet-viz.is-mobile .seed-box,
+        #quantum-gauntlet-viz.is-mobile .horizontal-participant,
+        #quantum-gauntlet-viz.is-mobile .auto-playoff-participant,
+        #quantum-gauntlet-viz.is-mobile .wildcard-competitor,
+        #quantum-gauntlet-viz.is-mobile .advance-slot,
+        #quantum-gauntlet-viz.is-mobile .conference-team,
+        #quantum-gauntlet-viz.is-mobile .championship-team,
+        #quantum-gauntlet-viz.is-mobile .week-indicators,
+        #quantum-gauntlet-viz.is-mobile .horizontal-section-header,
+        #quantum-gauntlet-viz.is-mobile .phases-header,
+        #quantum-gauntlet-viz.is-mobile .column-header {
+          min-width: 0;
+          max-width: 100%;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: normal;
+          word-break: break-word;
+        }
+
+        /* Single-column stacks for horizontal areas */
+        #quantum-gauntlet-viz.is-mobile .week13-horizontal-container .seeding-results-grid,
+        #quantum-gauntlet-viz.is-mobile .duel-horizontal-container,
+        #quantum-gauntlet-viz.is-mobile .playoff-horizontal-container,
+        #quantum-gauntlet-viz.is-mobile .playoff-competitors-grid,
+        #quantum-gauntlet-viz.is-mobile .wildcard-competitors,
+        #quantum-gauntlet-viz.is-mobile .playoff-advancement .advancement-slots {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 12px;
+        }
+
+        /* Week 13 seed rows as single-column */
+        #quantum-gauntlet-viz.is-mobile .week13-horizontal-container .seed-row { display: grid; grid-template-columns: 1fr; gap: 8px; }
+
+        /* Score line reflow (math row + total row) */
+        #quantum-gauntlet-viz.is-mobile .participant-scoring {
+          display: grid;
+          grid-template-columns: auto auto auto auto;
+          grid-template-areas: "w14 plus w15 equals" "total total total total";
+          gap: 6px 10px;
+          align-items: center;
+        }
+        #quantum-gauntlet-viz.is-mobile .participant-scoring .week-score:first-child { grid-area: w14; }
+        #quantum-gauntlet-viz.is-mobile .participant-scoring .score-plus { grid-area: plus; }
+        #quantum-gauntlet-viz.is-mobile .participant-scoring .week-score:nth-of-type(2) { grid-area: w15; }
+        #quantum-gauntlet-viz.is-mobile .participant-scoring .score-equals { grid-area: equals; }
+        #quantum-gauntlet-viz.is-mobile .participant-scoring .total-score { grid-area: total; justify-self: start; }
+
+        /* VS indicator centering */
+        #quantum-gauntlet-viz.is-mobile .vs-indicator { text-align: center; }
+
+        /* Media never exceed card */
+        #quantum-gauntlet-viz.is-mobile img,
+        #quantum-gauntlet-viz.is-mobile svg,
+        #quantum-gauntlet-viz.is-mobile canvas { max-width: 100%; height: auto; }
+
+        /* ===== QUANTUM GAUNTLET — MOBILE HOTFIX (place LAST) ===== */
+        @media (max-width: 820px) {
+          /* 0) Root guards: kill sideways scroll page-wide */
+          html, body { max-width: 100%; overflow-x: hidden; }
+
+          /* 1) Viz root must fit the screen and not push right */
+          #quantum-gauntlet-viz {
+            width: 100% !important;
+            max-width: 100vw !important;
+            margin: 0 auto !important;
+            padding: 12px !important;
+            box-sizing: border-box !important;
+            overflow-x: hidden !important;
+            position: relative !important;
+            transform: none !important;
+            left: auto !important; right: auto !important;
+          }
+
+          /* 2) Clamp ALL top-level blocks inside the viz */
+          #quantum-gauntlet-viz .tournament-header,
+          #quantum-gauntlet-viz .tournament-bracket,
+          #quantum-gauntlet-viz .week13-horizontal-section,
+          #quantum-gauntlet-viz .week13-horizontal-container,
+          #quantum-gauntlet-viz .simultaneous-phases-container,
+          #quantum-gauntlet-viz .horizontal-sections-container,
+          #quantum-gauntlet-viz #duel-horizontal-section,
+          #quantum-gauntlet-viz #playoff-horizontal-section,
+          #quantum-gauntlet-viz #wildcard-horizontal-section,
+          #quantum-gauntlet-viz .vertical-columns-container,
+          #quantum-gauntlet-viz .week16-container,
+          #quantum-gauntlet-viz .week17-container,
+          #quantum-gauntlet-viz .tournament-info-panel {
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 auto !important;
+            padding: 0 !important;
+            box-sizing: border-box !important;
+            position: static !important;
+            transform: none !important;
+            left: auto !important; right: auto !important;
+          }
+
+          /* 3) Make ALL children shrink instead of forcing overflow */
+          #quantum-gauntlet-viz * {
+            box-sizing: border-box;
+            min-width: 0 !important;
+            max-width: 100% !important;
+            white-space: normal !important;
+            word-break: break-word !important;
+          }
+
+          /* 4) Turn every “horizontal” area into a ONE-COLUMN stack */
+          #quantum-gauntlet-viz .seeding-results-grid,
+          #quantum-gauntlet-viz .week13-horizontal-container .seed-row,
+          #quantum-gauntlet-viz .duel-horizontal-container,
+          #quantum-gauntlet-viz .playoff-horizontal-container,
+          #quantum-gauntlet-viz .playoff-competitors-grid,
+          #quantum-gauntlet-viz .wildcard-competitors,
+          #quantum-gauntlet-viz .playoff-advancement .advancement-slots,
+          #quantum-gauntlet-viz .conference-participants,
+          #quantum-gauntlet-viz .championship-participants {
+            display: grid !important;
+            grid-template-columns: 1fr !important;
+            gap: 12px !important;
+          }
+
+          /* 5) Each “card” fills the column width */
+          #quantum-gauntlet-viz .seed-box,
+          #quantum-gauntlet-viz .horizontal-participant,
+          #quantum-gauntlet-viz .auto-playoff-participant,
+          #quantum-gauntlet-viz .wildcard-competitor,
+          #quantum-gauntlet-viz .conference-team,
+          #quantum-gauntlet-viz .championship-team,
+          #quantum-gauntlet-viz .advance-slot {
+            width: 100% !important;
+            max-width: 100% !important;
+          }
+
+          /* 6) Score line: math on row 1, total on row 2 */
+          #quantum-gauntlet-viz .participant-scoring {
+            display: grid !important;
+            grid-template-columns: auto auto auto auto !important;
+            grid-template-areas:
+              "w14 plus w15 equals"
+              "total total total total" !important;
+            gap: 6px 10px !important;
+            align-items: center !important;
+          }
+          #quantum-gauntlet-viz .participant-scoring .week-score:first-child { grid-area: w14; }
+          #quantum-gauntlet-viz .participant-scoring .score-plus { grid-area: plus; }
+          #quantum-gauntlet-viz .participant-scoring .week-score:nth-of-type(2) { grid-area: w15; }
+          #quantum-gauntlet-viz .participant-scoring .score-equals { grid-area: equals; }
+          #quantum-gauntlet-viz .participant-scoring .total-score { grid-area: total; justify-self: start; }
+
+          /* 7) Center the VS badge under the two duel cards */
+          #quantum-gauntlet-viz .vs-indicator { text-align: center !important; }
+
+          /* 8) Media never exceeds the column width */
+          #quantum-gauntlet-viz img,
+          #quantum-gauntlet-viz svg,
+          #quantum-gauntlet-viz canvas { max-width: 100% !important; height: auto !important; }
+        }
+        /* ====== MOBILE OVERRIDES (place last) ====== */
+        @media (max-width: 820px) {
+          /* Root: no sideways scroll, small inner padding */
+          html, body { max-width: 100%; overflow-x: hidden; }
+          #quantum-gauntlet-viz { padding-inline: 14px; }
+
+          /* Force mobile mode styles even if class isn't toggled */
+          #quantum-gauntlet-viz { --mobile-card-max: 540px; }
+
+          /* Big sections fit viewport and are centered */
+          #quantum-gauntlet-viz .tournament-bracket,
+          #quantum-gauntlet-viz .week13-horizontal-section,
+          #quantum-gauntlet-viz .simultaneous-phases-container,
+          #quantum-gauntlet-viz #duel-horizontal-section,
+          #quantum-gauntlet-viz #playoff-horizontal-section,
+          #quantum-gauntlet-viz #wildcard-horizontal-section,
+          #quantum-gauntlet-viz .vertical-columns-container {
+            width: 100% !important;
+            max-width: min(100%, var(--mobile-card-max)) !important;
+            margin: 0 auto !important;
+            padding: 0 !important;
+            box-sizing: border-box !important;
+            position: static !important;
+            transform: none !important;
+            left: auto !important; right: auto !important;
+          }
+
+          /* Clamp inner gradient/wrapper containers */
+          #quantum-gauntlet-viz .horizontal-sections-container,
+          #quantum-gauntlet-viz .week13-horizontal-container,
+          #quantum-gauntlet-viz .week16-container,
+          #quantum-gauntlet-viz .week17-container {
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 auto !important;
+          }
+
+          /* Allow shrink everywhere */
+          #quantum-gauntlet-viz * { box-sizing: border-box; min-width: 0; }
+
+          /* Cards fill width */
+          #quantum-gauntlet-viz .seed-box,
+          #quantum-gauntlet-viz .horizontal-participant,
+          #quantum-gauntlet-viz .auto-playoff-participant,
+          #quantum-gauntlet-viz .wildcard-competitor,
+          #quantum-gauntlet-viz .advance-slot,
+          #quantum-gauntlet-viz .conference-team,
+          #quantum-gauntlet-viz .championship-team {
+            width: 100% !important;
+            max-width: 100% !important;
+          }
+
+          /* Collapse multi-column to one column */
+          #quantum-gauntlet-viz .seeding-results-grid,
+          #quantum-gauntlet-viz .playoff-competitors-grid,
+          #quantum-gauntlet-viz .duel-horizontal-container,
+          #quantum-gauntlet-viz .playoff-horizontal-container,
+          #quantum-gauntlet-viz .wildcard-competitors,
+          #quantum-gauntlet-viz .playoff-advancement .advancement-slots,
+          #quantum-gauntlet-viz .week13-horizontal-container .seed-row {
+            display: grid !important;
+            grid-template-columns: 1fr !important;
+            gap: 12px !important;
+          }
+
+          /* Score line: 2 rows */
+          #quantum-gauntlet-viz .participant-scoring {
+            display: grid !important;
+            grid-template-columns: auto auto auto auto !important;
+            grid-template-areas:
+              "w14 plus w15 equals"
+              "total total total total" !important;
+            gap: 6px 10px !important;
+            align-items: center !important;
+          }
+          #quantum-gauntlet-viz .participant-scoring .week-score:first-child { grid-area: w14; }
+          #quantum-gauntlet-viz .participant-scoring .score-plus { grid-area: plus; }
+          #quantum-gauntlet-viz .participant-scoring .week-score:nth-of-type(2) { grid-area: w15; }
+          #quantum-gauntlet-viz .participant-scoring .score-equals { grid-area: equals; }
+          #quantum-gauntlet-viz .participant-scoring .total-score { grid-area: total; justify-self: start; }
+
+          /* Wrap long labels */
+          #quantum-gauntlet-viz .seed-team,
+          #quantum-gauntlet-viz .seed-status,
+          #quantum-gauntlet-viz .participant-name,
+          #quantum-gauntlet-viz .week-indicators {
+            white-space: normal !important;
+            word-break: break-word !important;
+          }
+
+          /* Slight scale to add breathing room */
+          #quantum-gauntlet-viz .horizontal-tournament-section,
+          #quantum-gauntlet-viz .vertical-columns-container {
+            transform: scale(0.98);
+            transform-origin: top center;
+          }
+        }
+
         .red-dot {
             display: inline-block;
             width: 8px;
@@ -3688,7 +4233,11 @@
         <div class="header">
             <h1>Shake Weight Fantasy Football</h1>
             <p style="font-weight:700; letter-spacing:0.5px;">Draft: September 3rd, 2025 8:00 PM CST</p>
-            <div class="timestamp" id="timestamp">Loading...</div>
+            <!-- <div class="timestamp" id="timestamp">Loading...</div> -->
+            <div class="view-toggle">
+                <button id="desktop-mode" class="toggle-btn active">Desktop</button>
+                <button id="mobile-mode" class="toggle-btn">Mobile</button>
+            </div>
         </div>
 
         <div id="loading" class="loading">
@@ -4174,9 +4723,9 @@
                         <div style="height: 400px; background: rgba(27, 59, 99, 0.2); border-radius: 6px; padding: 15px;">
                             <canvas id="earningsChart"></canvas>
                         </div>
-                        <div style="text-align: center; font-size: 12px; color: #79C4FF; font-style: italic; margin-top: 10px;" id="last-updated">
+                        <!-- <div style="text-align: center; font-size: 12px; color: #79C4FF; font-style: italic; margin-top: 10px;" id="last-updated">
                             Last Updated: --
-                        </div>
+                        </div> -->
                     </div>
                     
                 </div>
@@ -4616,7 +5165,7 @@
                             </div>
 
                              <!-- Wildcard Section (Weeks 14+15) -->
-                             <div class="horizontal-tournament-section duel-section" id="duel-horizontal-section">
+                             <div class="horizontal-tournament-section wildcard-section" id="wildcard-horizontal-section">
                                 <div class="horizontal-section-header">
                                     <h3>⚔️ Wildcard Round</h3>
                                     <p>Seeds #7–#12 play in Week 14. Highest score is the Wildcard Winner and advances to the Week 15 Divisional; all others go to the Toilet Bowl.</p>
@@ -5001,6 +5550,45 @@
             }
         }
         document.addEventListener('DOMContentLoaded', loadSnapshot);
+
+        // View mode toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const desktopBtn = document.getElementById('desktop-mode');
+            const mobileBtn = document.getElementById('mobile-mode');
+            if (desktopBtn && mobileBtn) {
+                desktopBtn.addEventListener('click', function() {
+                    document.body.classList.remove('mobile-mode');
+                    desktopBtn.classList.add('active');
+                    mobileBtn.classList.remove('active');
+                    // Keep tournament viz in desktop layout
+                    if (window.setTournamentLayoutMode) setTournamentLayoutMode('Desktop');
+                });
+                mobileBtn.addEventListener('click', function() {
+                    document.body.classList.add('mobile-mode');
+                    mobileBtn.classList.add('active');
+                    desktopBtn.classList.remove('active');
+                    // Switch tournament viz to mobile layout
+                    if (window.setTournamentLayoutMode) setTournamentLayoutMode('Mobile');
+                });
+            }
+        });
+        // Tournament layout mode helpers (scoped to #quantum-gauntlet-viz)
+        function setTournamentLayoutMode(mode) {
+            const root = document.getElementById('quantum-gauntlet-viz');
+            if (!root) return;
+            root.classList.toggle('is-desktop', mode === 'Desktop');
+            root.classList.toggle('is-mobile', mode === 'Mobile');
+        }
+
+        function autoApplyMobileIfUnset() {
+            const root = document.getElementById('quantum-gauntlet-viz');
+            if (!root) return;
+            const hasMode = root.classList.contains('is-mobile') || root.classList.contains('is-desktop');
+            if (!hasMode && window.matchMedia('(max-width: 820px)').matches) {
+                root.classList.add('is-mobile');
+            }
+        }
+        document.addEventListener('DOMContentLoaded', autoApplyMobileIfUnset);
 
         function updateDisplay(data) {
             console.log('Received data:', data);
@@ -6366,17 +6954,17 @@
 
         function updateLastUpdatedTime(customTime = null) {
             const lastUpdatedElement = document.getElementById('last-updated');
-            if (lastUpdatedElement) {
-                if (customTime === 'N/A - 2025 season not started') {
-                    lastUpdatedElement.textContent = customTime;
-                } else if (customTime) {
-                    const date = new Date(customTime);
-                    lastUpdatedElement.textContent = `Last Updated: ${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
-                } else {
-                    const now = new Date();
-                    lastUpdatedElement.textContent = `Last Updated: ${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
-                }
-            }
+            // if (lastUpdatedElement) {
+            //     if (customTime === 'N/A - 2025 season not started') {
+            //         lastUpdatedElement.textContent = customTime;
+            //     } else if (customTime) {
+            //         const date = new Date(customTime);
+            //         lastUpdatedElement.textContent = `Last Updated: ${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+            //     } else {
+            //         const now = new Date();
+            //         lastUpdatedElement.textContent = `Last Updated: ${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
+            //     }
+            // }
         }
 
         // UPDATE createEarningsChart to handle both seasons
