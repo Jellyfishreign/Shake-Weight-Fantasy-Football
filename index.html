@@ -5006,13 +5006,13 @@
             console.log('Received data:', data);
             console.log('Timestamp:', data.timestamp);
             
-            // Update timestamp
-            if (data.timestamp) {
-                document.getElementById('timestamp').textContent = 'Last Update: ' + data.timestamp;
-            } else {
-                console.error('No timestamp in data');
-                document.getElementById('timestamp').textContent = 'Last Update: No data available';
-            }
+            // Update timestamp (disabled for static snapshot mode)
+            // if (data.timestamp) {
+            //     document.getElementById('timestamp').textContent = 'Last Update: ' + data.timestamp;
+            // } else {
+            //     console.error('No timestamp in data');
+            //     document.getElementById('timestamp').textContent = 'Last Update: No data available';
+            // }
             
             // Update all tournament data
             updateMiniTournament(data.week14, data.week15);
