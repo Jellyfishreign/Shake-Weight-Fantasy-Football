@@ -3375,7 +3375,7 @@
         }
 
         .elimination-note {
-            color: #8B4513;
+            color: #000000;
             font-size: 11px;
             text-align: center;
             font-style: italic;
@@ -3530,7 +3530,7 @@
             background: rgba(139, 69, 19, 0.3);
             border-radius: 4px;
             padding: 4px 8px;
-            color: #8B4513;
+            color: #000000;
             font-size: 10px;
             text-align: center;
         }
@@ -3826,14 +3826,14 @@
         }
 
         .eliminated-label {
-            color: #8B4513;
+            color: #000000;
             font-size: 11px;
             font-weight: 600;
             margin-bottom: 3px;
         }
 
         .eliminated-details {
-            color: #8B4513;
+            color: #000000;
             font-size: 10px;
         }
 
@@ -4257,12 +4257,12 @@
 
         <div class="tabs-container">
             <div class="tabs-header">
-                            <button class="tab-button" data-tab="rules-updates">Rules & Updates</button>
+                            <button class="tab-button active" data-tab="rules-updates">Rules & Updates</button>
                             <button class="tab-button" data-tab="payouts-content">Payouts</button>
-            <button class="tab-button active" data-tab="quantum-gauntlet">The Quantum Gauntlet</button>
+            <button class="tab-button" data-tab="quantum-gauntlet">The Quantum Gauntlet</button>
             <button class="tab-button" data-tab="scoring-idp">Scoring IDP</button>
             </div>
-            <div class="tab-content" id="quantum-gauntlet" style="display: block;">
+            <div class="tab-content" id="quantum-gauntlet" style="display: none;">
                 <div class="subtabs-container">
                     <div class="subtabs-header">
                         <button class="subtab-button active" data-subtab="mini-tournament">Wildcard + Divisional Round</button>
@@ -4759,7 +4759,7 @@
                 </div>
             </div>
 
-            <div class="tab-content" id="rules-updates" style="display: none;">
+            <div class="tab-content" id="rules-updates" style="display: block;">
                 <div class="rules-section">
                     <h2>Changes + Reminders</h2>
                     <ul>
@@ -5618,9 +5618,14 @@
             updateWeek17(data.week17);
             updateStandings(data.standings, data.initial_standings);
             
-            // Update The Run chart if data is available
+            // Update The Run chart if data is available; on mobile, render simplified summary instead
             if (data.the_run) {
-                updateTheRunTab(data);
+                const isMobileViewport = window.matchMedia('(max-width: 820px)').matches || /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+                if (isMobileViewport) {
+                    renderTheRunMobileSummary(data);
+                } else {
+                    updateTheRunTab(data);
+                }
             }
         }
 
@@ -5778,10 +5783,15 @@
                     const subtabId = this.getAttribute('data-subtab');
                     document.getElementById(subtabId).style.display = 'block';
                     
-                    // Initialize The Run chart when the final-standings subtab is clicked
+                    // Initialize The Run view when the final-standings subtab is clicked
                     if (subtabId === 'final-standings' && currentData && currentData.the_run) {
+                        const isMobileViewport = window.matchMedia('(max-width: 820px)').matches || /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
                         setTimeout(() => {
-                            createTheRunChart(currentData);
+                            if (isMobileViewport) {
+                                renderTheRunMobileSummary(currentData);
+                            } else {
+                                createTheRunChart(currentData);
+                            }
                         }, 100);
                     }
                 });
@@ -6764,6 +6774,87 @@
             } else {
                 console.error('No the_run data available');
             }
+        }
+
+        // Mobile-only: render a compact, readable summary list for The Run
+        function renderTheRunMobileSummary(data) {
+            const container = document.querySelector('#final-standings .run-container');
+            if (!container) return;
+            // Clear existing chart if any
+            const chartWrap = container.querySelector('.chart-wrapper');
+            if (chartWrap) chartWrap.style.display = 'none';
+
+            // Remove any existing mobile summary
+            const old = container.querySelector('#the-run-mobile-summary');
+            if (old) old.remove();
+
+            const wrapper = document.createElement('div');
+            wrapper.id = 'the-run-mobile-summary';
+            wrapper.style.marginTop = '8px';
+            wrapper.style.background = 'rgba(10,31,51,0.6)';
+            wrapper.style.border = '1px solid rgba(121,196,255,0.25)';
+            wrapper.style.borderRadius = '10px';
+            wrapper.style.padding = '10px';
+
+            const title = document.createElement('div');
+            title.textContent = 'Championship Path (Mobile Summary)';
+            title.style.color = '#B4E0FF';
+            title.style.fontWeight = '700';
+            title.style.marginBottom = '8px';
+            wrapper.appendChild(title);
+
+            const list = document.createElement('ul');
+            list.style.listStyle = 'none';
+            list.style.padding = '0';
+            list.style.margin = '0';
+
+            const teams = data.the_run.teams || [];
+            const playoff = data.the_run.playoff_results || {};
+
+            function statusForTeam(teamName) {
+                const seedPrefixRe = /^\(\d+\)\s*/;
+                const wk14 = (playoff.week14?.wildcard || []);
+                const wk15 = (playoff.week15?.divisional || []);
+                const wk16 = (playoff.week16?.conference || []);
+                const wk17 = (playoff.week17?.championship || []);
+                const findByTeam = (arr) => arr.find(x => (x.team || '').replace(seedPrefixRe,'') === teamName);
+                if (findByTeam(wk17)?.final_result === 'Champion') return 'Champion';
+                if (findByTeam(wk17)) return 'Runner-up';
+                if (findByTeam(wk16)) return 'Conference Round';
+                if (findByTeam(wk15)) return 'Divisional Round';
+                if (findByTeam(wk14)) return 'Wildcard';
+                return 'Season';
+            }
+
+            teams
+              .slice()
+              .sort((a,b) => (a.seed||99) - (b.seed||99))
+              .forEach(t => {
+                const li = document.createElement('li');
+                li.style.display = 'flex';
+                li.style.justifyContent = 'space-between';
+                li.style.alignItems = 'center';
+                li.style.padding = '8px 6px';
+                li.style.borderBottom = '1px dashed rgba(121,196,255,0.2)';
+
+                const left = document.createElement('div');
+                left.textContent = `#${t.seed} ${t.team}`;
+                left.style.color = '#E2F1FF';
+                left.style.fontWeight = '600';
+
+                const right = document.createElement('span');
+                const st = statusForTeam(t.team);
+                right.textContent = st;
+                right.style.color = st === 'Champion' ? '#FFD700' : '#79C4FF';
+                right.style.fontWeight = st === 'Champion' ? '800' : '600';
+
+                li.appendChild(left);
+                li.appendChild(right);
+                list.appendChild(li);
+            });
+
+            wrapper.appendChild(list);
+            container.appendChild(wrapper);
         }
 
         // Add this temporary debug check to ensure everything works:
