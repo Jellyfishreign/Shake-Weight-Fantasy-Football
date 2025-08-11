@@ -1092,6 +1092,47 @@
         body.mobile-mode .standings-card { padding: 10px !important; }
         body.mobile-mode #standings-grid { display: grid !important; grid-template-columns: 1fr !important; gap: 10px !important; }
         body.mobile-mode .duel-of-fates-video { display: none !important; }
+        /* Ensure Duel of the Fates and Week 17 tables fit on mobile */
+        body.mobile-mode #duel-horizontal-section table.data-table,
+        body.mobile-mode #week17 .data-table,
+        body.mobile-mode #week17-championship,
+        body.mobile-mode #week17-purgatory,
+        body.mobile-mode #week17-toilet {
+            table-layout: fixed;
+            width: 100%;
+        }
+        /* Tighter padding/size for these specific areas */
+        body.mobile-mode #duel-horizontal-section table.data-table th,
+        body.mobile-mode #duel-horizontal-section table.data-table td,
+        body.mobile-mode #week17 .data-table th,
+        body.mobile-mode #week17 .data-table td {
+            padding: 6px 5px;
+            font-size: 11px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        /* Column width guidance so the last (payout) column remains visible */
+        body.mobile-mode #duel-horizontal-section table.data-table th:nth-child(1),
+        body.mobile-mode #duel-horizontal-section table.data-table td:nth-child(1),
+        body.mobile-mode #week17 .data-table th:nth-child(1),
+        body.mobile-mode #week17 .data-table td:nth-child(1) { width: 44%; }
+        body.mobile-mode #duel-horizontal-section table.data-table th:nth-child(2),
+        body.mobile-mode #duel-horizontal-section table.data-table td:nth-child(2),
+        body.mobile-mode #week17 .data-table th:nth-child(2),
+        body.mobile-mode #week17 .data-table td:nth-child(2) { width: 14%; }
+        body.mobile-mode #duel-horizontal-section table.data-table th:nth-child(3),
+        body.mobile-mode #duel-horizontal-section table.data-table td:nth-child(3),
+        body.mobile-mode #week17 .data-table th:nth-child(3),
+        body.mobile-mode #week17 .data-table td:nth-child(3) { width: 14%; }
+        body.mobile-mode #duel-horizontal-section table.data-table th:nth-child(4),
+        body.mobile-mode #duel-horizontal-section table.data-table td:nth-child(4),
+        body.mobile-mode #week17 .data-table th:nth-child(4),
+        body.mobile-mode #week17 .data-table td:nth-child(4) { width: 14%; }
+        body.mobile-mode #duel-horizontal-section table.data-table th:last-child,
+        body.mobile-mode #duel-horizontal-section table.data-table td:last-child,
+        body.mobile-mode #week17 .data-table th:last-child,
+        body.mobile-mode #week17 .data-table td:last-child { width: 14%; }
 
         /* Utility visibility helpers for mobile/desktop within viz */
         .desktop-only { display: inline; }
