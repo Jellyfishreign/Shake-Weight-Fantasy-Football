@@ -1071,6 +1071,9 @@
         body.mobile-mode .container { max-width: 480px; margin: 0 auto; padding: 10px; }
         body.mobile-mode .header { padding: 12px; }
         body.mobile-mode .tabs-header { overflow-x: auto; white-space: nowrap; }
+        /* Hide Quantum Gauntlet and Payouts tabs on mobile */
+        body.mobile-mode .tabs-header .tab-button[data-tab="quantum-gauntlet"],
+        body.mobile-mode .tabs-header .tab-button[data-tab="payouts-content"] { display: none !important; }
         body.mobile-mode .tab-button { padding: 10px 12px; font-size: 0.9rem; }
         body.mobile-mode .subtabs-header {
             overflow-x: auto;
@@ -5706,18 +5709,58 @@
 
         function updateMiniTournament(week14Data, week15Data) {
             // Update Week 14 data - only top 2 for Duel of the Fates
-           updateTable('week14-bye', week14Data.bye.slice(0, 2), ['team', 'score']);
-           updateTable('week14-playoff', week14Data.playoff, ['team', 'score']);
-           updateTable('week14-wildcard', week14Data.wildcard, ['team', 'score']);
-           updateTable('week14-toilet', week14Data.toilet || [], ['team', 'score']);
-            
+            updateTable('week14-bye', (week14Data.bye || []).slice(0, 2), ['team', 'score']);
+            updateTable('week14-playoff', week14Data.playoff || [], ['team', 'score']);
+            updateTable('week14-wildcard', week14Data.wildcard || [], ['team', 'score']);
+            updateTable('week14-toilet', week14Data.toilet || [], ['team', 'score']);
+
             // Update Week 15 data - only top 2 for Duel of the Fates
-           updateTable('week15-bye', week15Data.bye.slice(0, 2), ['team', 'score']);
-           updateTable('week15-playoff', week15Data.playoff, ['team', 'score']);
-           updateTable('week15-toilet', week15Data.toilet || [], ['team', 'score']);
-            
-            // Update Results
-            updateTable('week15-bye-result', week15Data.bye_result || [], ['team', 'proj_score', 'score', 'next_week', 'payout']);
+            updateTable('week15-bye', (week15Data.bye || []).slice(0, 2), ['team', 'score']);
+            updateTable('week15-playoff', week15Data.playoff || [], ['team', 'score']);
+            updateTable('week15-toilet', week15Data.toilet || [], ['team', 'score']);
+
+            // Compute Duel of the Fates 2-week combined result and payout by margin
+            const duelCombinedResults = (function computeDuelResults() {
+                const wk14 = (week14Data.bye || []).slice(0, 2);
+                const wk15 = (week15Data.bye || []).slice(0, 2);
+                const byTeam14 = new Map(wk14.map(r => [String(r.team), Number(r.score || 0)]));
+                const byTeam15 = new Map(wk15.map(r => [String(r.team), Number(r.score || 0)]));
+                const teams = Array.from(new Set([...byTeam14.keys(), ...byTeam15.keys()]));
+                const totals = teams.map(name => ({
+                    team: name,
+                    total: (byTeam14.get(name) || 0) + (byTeam15.get(name) || 0)
+                }));
+                if (totals.length !== 2) return [];
+                // Determine winner/loser and margin
+                totals.sort((a,b) => b.total - a.total);
+                const winner = totals[0];
+                const loser = totals[1];
+                const margin = Math.abs(winner.total - loser.total);
+
+                function payoutForMargin(diff) {
+                    if (diff <= 7.5) return [60, 40];
+                    if (diff <= 15) return [70, 30];
+                    if (diff <= 23.5) return [80, 20];
+                    if (diff <= 30) return [90, 10];
+                    return [100, 0];
+                }
+                const [winPay, losePay] = payoutForMargin(margin);
+
+                const formatMoney = n => `$${n.toFixed(0)}.00`;
+                const formatScore = n => Number(n).toFixed(2);
+
+                return [
+                    { team: winner.team, proj_score: '', score: formatScore(winner.total), next_week: 'Conf Champ', payout: formatMoney(winPay) },
+                    { team: loser.team, proj_score: '', score: formatScore(loser.total), next_week: 'Conf Champ', payout: formatMoney(losePay) }
+                ];
+            })();
+
+            // Update Results tables
+            if (duelCombinedResults.length === 2) {
+                updateTable('week15-bye-result', duelCombinedResults, ['team', 'proj_score', 'score', 'next_week', 'payout']);
+            } else {
+                updateTable('week15-bye-result', week15Data.bye_result || [], ['team', 'proj_score', 'score', 'next_week', 'payout']);
+            }
             updateTable('week15-playoff-result', week15Data.playoff_result || [], ['team', 'proj_score', 'score', 'next_week', 'payout']);
             updateTable('week15-toilet-result', week15Data.toilet_result || [], ['team', 'proj_score', 'score', 'next_week', 'payout']);
         }
