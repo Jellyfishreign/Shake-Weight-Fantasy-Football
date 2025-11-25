@@ -4338,7 +4338,7 @@
                             <button class="tab-button active" data-tab="rules-updates">Rules & Updates</button>
                             <button class="tab-button" data-tab="payouts-content">Payouts</button>
             <button class="tab-button" data-tab="quantum-gauntlet">The Quantum Gauntlet</button>
-            <button class="tab-button" data-tab="scoring-idp">Scoring IDP</button>
+            <button class="tab-button" data-tab="scoring-idp" style="display: none;">Scoring IDP</button>
             </div>
             <div class="tab-content" id="quantum-gauntlet" style="display: none;">
                 <div class="subtabs-container">
@@ -4689,7 +4689,6 @@
                                                 <th>Proj. Score</th>
                                                 <th>Score</th>
                                                 <th>Final Result</th>
-                                                <th>Payout</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -4710,7 +4709,6 @@
                                                 <th>Proj. Score</th>
                                                 <th>Score</th>
                                                 <th>Final Result</th>
-                                                <th>Payout</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -4745,21 +4743,10 @@
                 <div class="payouts-container">
                     <h1 style="color: #FFD700; text-align: center; margin-bottom: 10px;">💰 Shake Weight Fantasy Payouts</h1>
                     
-                    <!-- ADD this season toggle section -->
-                    <div class="season-toggle-container" style="text-align: center; margin-bottom: 20px;">
-                        <div class="toggle-label" style="color: #79C4FF; font-size: 14px; margin-bottom: 10px;">
-                            View Season Data:
-                        </div>
-                        <div class="toggle-switch">
-                            <button id="season-2024" class="toggle-btn active" onclick="switchSeason('2024')">
-                                2024 (Demo)
-                            </button>
-                            <button id="season-2025" class="toggle-btn" onclick="switchSeason('2025')">
-                                2025 (Live)
-                            </button>
-                        </div>
-                        <div class="season-status" style="color: #B4E0FF; font-size: 12px; margin-top: 8px; font-style: italic;" id="season-status">
-                            Showing 2024 demo data
+                    <!-- Season Status -->
+                    <div class="season-status-container" style="text-align: center; margin-bottom: 20px;">
+                        <div class="season-status" style="color: #79C4FF; font-size: 14px; font-style: italic;" id="season-status">
+                            Showing 2025 Live Data
                         </div>
                     </div>
                     
@@ -5595,48 +5582,37 @@
 
 
         <script>
-        // Live socket is temporarily disabled for static snapshot mode
-        // const socket = io();
+        // Live WebSocket connection
+        const socket = io();
         let currentData = null;
+        window.latestData = null;
 
-        // socket.on('connect', function() {
-        //     console.log('Connected to server');
-        //     document.getElementById('loading').style.display = 'none';
-        //     document.getElementById('quantum-gauntlet').style.display = 'block';
-        //     document.querySelector('.subtab-button.active').click();
-        // });
+        socket.on('connect', function() {
+            console.log('Connected to server');
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('quantum-gauntlet').style.display = 'block';
+            document.querySelector('.subtab-button.active').click();
+        });
 
-        // socket.on('data_update', function(data) {
-        //     console.log('WebSocket data_update received:', data);
-        //     currentData = data;
-        //     updateDisplay(data);
-        // });
-
-        // socket.on('error', function(data) {
-        //     document.getElementById('error').style.display = 'block';
-        //     document.getElementById('error').textContent = 'Error: ' + data.message;
-        //     document.getElementById('loading').style.display = 'none';
-        // });
-
-        // Static snapshot loader
-        async function loadSnapshot() {
-            try {
-                const res = await fetch('data_snapshot.json', { cache: 'no-store' });
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                const data = await res.json();
-                currentData = data;
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('quantum-gauntlet').style.display = 'block';
-                updateDisplay(data);
-                const activeBtn = document.querySelector('.subtab-button.active');
-                if (activeBtn) activeBtn.click();
-            } catch (e) {
-                console.error('Failed to load snapshot:', e);
-                // Suppress on-page error UI for snapshot mode
-                document.getElementById('loading').style.display = 'none';
+        socket.on('data_update', function(data) {
+            console.log('WebSocket data_update received:', data);
+            currentData = data;
+            window.latestData = data;
+            updateDisplay(data);
+            
+            // If on payouts tab, reload the data
+            const payoutsTab = document.getElementById('payouts-content');
+            if (payoutsTab && payoutsTab.style.display !== 'none') {
+                console.log('Reloading payouts with new data');
+                load2025LiveData();
             }
-        }
-        document.addEventListener('DOMContentLoaded', loadSnapshot);
+        });
+
+        socket.on('error', function(data) {
+            document.getElementById('error').style.display = 'block';
+            document.getElementById('error').textContent = 'Error: ' + data.message;
+            document.getElementById('loading').style.display = 'none';
+        });
 
         // View mode toggle (kept as fallback if user wants to force mode)
         document.addEventListener('DOMContentLoaded', function() {
@@ -5708,19 +5684,40 @@
         }
 
         function updateMiniTournament(week14Data, week15Data) {
-            // Update Week 14 data - only top 2 for Duel of the Fates
-            updateTable('week14-bye', (week14Data.bye || []).slice(0, 2), ['team', 'score']);
-            updateTable('week14-playoff', week14Data.playoff || [], ['team', 'score']);
-            updateTable('week14-wildcard', week14Data.wildcard || [], ['team', 'score']);
-            updateTable('week14-toilet', week14Data.toilet || [], ['team', 'score']);
+            // Check if weeks are complete OR in progress based on payouts data
+            // Use currentWeekInProgress to show real-time scores during games
+            const currentWeek = window.latestData?.payouts?.currentWeekInProgress || 0;
+            const week14Complete = currentWeek >= 14;
+            const week15Complete = currentWeek >= 15;
+            
+            // Update Week 14 data - only if week 14 is complete
+            if (week14Complete) {
+                updateTable('week14-bye', (week14Data.bye || []).slice(0, 2), ['team', 'score']);
+                updateTable('week14-playoff', week14Data.playoff || [], ['team', 'score']);
+                updateTable('week14-wildcard', week14Data.wildcard || [], ['team', 'score']);
+                updateTable('week14-toilet', week14Data.toilet || [], ['team', 'score']);
+            } else {
+                // Show empty/pending state
+                updateTable('week14-bye', [], ['team', 'score']);
+                updateTable('week14-playoff', [], ['team', 'score']);
+                updateTable('week14-wildcard', [], ['team', 'score']);
+                updateTable('week14-toilet', [], ['team', 'score']);
+            }
 
-            // Update Week 15 data - only top 2 for Duel of the Fates
-            updateTable('week15-bye', (week15Data.bye || []).slice(0, 2), ['team', 'score']);
-            updateTable('week15-playoff', week15Data.playoff || [], ['team', 'score']);
-            updateTable('week15-toilet', week15Data.toilet || [], ['team', 'score']);
+            // Update Week 15 data - only if week 15 is complete
+            if (week15Complete) {
+                updateTable('week15-bye', (week15Data.bye || []).slice(0, 2), ['team', 'score']);
+                updateTable('week15-playoff', week15Data.playoff || [], ['team', 'score']);
+                updateTable('week15-toilet', week15Data.toilet || [], ['team', 'score']);
+            } else {
+                // Show empty/pending state
+                updateTable('week15-bye', [], ['team', 'score']);
+                updateTable('week15-playoff', [], ['team', 'score']);
+                updateTable('week15-toilet', [], ['team', 'score']);
+            }
 
-            // Compute Duel of the Fates 2-week combined result and payout by margin
-            const duelCombinedResults = (function computeDuelResults() {
+            // Compute Duel of the Fates 2-week combined result and payout by margin - only if week 15 is complete
+            const duelCombinedResults = week15Complete ? (function computeDuelResults() {
                 const wk14 = (week14Data.bye || []).slice(0, 2);
                 const wk15 = (week15Data.bye || []).slice(0, 2);
                 const byTeam14 = new Map(wk14.map(r => [String(r.team), Number(r.score || 0)]));
@@ -5753,28 +5750,55 @@
                     { team: winner.team, proj_score: '', score: formatScore(winner.total), next_week: 'Conf Champ', payout: formatMoney(winPay) },
                     { team: loser.team, proj_score: '', score: formatScore(loser.total), next_week: 'Conf Champ', payout: formatMoney(losePay) }
                 ];
-            })();
+            })() : [];
 
-            // Update Results tables
-            if (duelCombinedResults.length === 2) {
-                updateTable('week15-bye-result', duelCombinedResults, ['team', 'proj_score', 'score', 'next_week', 'payout']);
+            // Update Results tables - only if week 15 is complete
+            if (week15Complete) {
+                if (duelCombinedResults.length === 2) {
+                    updateTable('week15-bye-result', duelCombinedResults, ['team', 'proj_score', 'score', 'next_week', 'payout']);
+                } else {
+                    updateTable('week15-bye-result', week15Data.bye_result || [], ['team', 'proj_score', 'score', 'next_week', 'payout']);
+                }
+                updateTable('week15-playoff-result', week15Data.playoff_result || [], ['team', 'proj_score', 'score', 'next_week', 'payout']);
+                updateTable('week15-toilet-result', week15Data.toilet_result || [], ['team', 'proj_score', 'score', 'next_week', 'payout']);
             } else {
-                updateTable('week15-bye-result', week15Data.bye_result || [], ['team', 'proj_score', 'score', 'next_week', 'payout']);
+                // Show empty state for results
+                updateTable('week15-bye-result', [], ['team', 'proj_score', 'score', 'next_week', 'payout']);
+                updateTable('week15-playoff-result', [], ['team', 'proj_score', 'score', 'next_week', 'payout']);
+                updateTable('week15-toilet-result', [], ['team', 'proj_score', 'score', 'next_week', 'payout']);
             }
-            updateTable('week15-playoff-result', week15Data.playoff_result || [], ['team', 'proj_score', 'score', 'next_week', 'payout']);
-            updateTable('week15-toilet-result', week15Data.toilet_result || [], ['team', 'proj_score', 'score', 'next_week', 'payout']);
         }
 
         function updateWeek16(weekData) {
-            updateTable('week16-conference', weekData.conference, ['team', 'proj_score', 'score', 'next_week']);
-            updateTable('week16-purgatory', weekData.purgatory, ['team', 'proj_score', 'score', 'next_week']);
-            updateTable('week16-toilet', weekData.toilet, ['team', 'proj_score', 'score', 'next_week']);
+            // Use currentWeekInProgress to show real-time scores during games
+            const currentWeek = window.latestData?.payouts?.currentWeekInProgress || 0;
+            const week16Complete = currentWeek >= 16;
+            
+            if (week16Complete) {
+                updateTable('week16-conference', weekData.conference, ['team', 'proj_score', 'score', 'next_week']);
+                updateTable('week16-purgatory', weekData.purgatory, ['team', 'proj_score', 'score', 'next_week']);
+                updateTable('week16-toilet', weekData.toilet, ['team', 'proj_score', 'score', 'next_week']);
+            } else {
+                updateTable('week16-conference', [], ['team', 'proj_score', 'score', 'next_week']);
+                updateTable('week16-purgatory', [], ['team', 'proj_score', 'score', 'next_week']);
+                updateTable('week16-toilet', [], ['team', 'proj_score', 'score', 'next_week']);
+            }
         }
 
         function updateWeek17(weekData) {
-            updateTable('week17-championship', weekData.championship, ['team', 'proj_score', 'score', 'final_result', 'payout']);
-            updateTable('week17-purgatory', weekData.purgatory, ['team', 'proj_score', 'score', 'final_result', 'payout']);
-            updateTable('week17-toilet', weekData.toilet, ['team', 'proj_score', 'score', 'final_result', 'payout']);
+            // Use currentWeekInProgress to show real-time scores during games
+            const currentWeek = window.latestData?.payouts?.currentWeekInProgress || 0;
+            const week17Complete = currentWeek >= 17;
+            
+            if (week17Complete) {
+                updateTable('week17-championship', weekData.championship, ['team', 'proj_score', 'score', 'final_result', 'payout']);
+                updateTable('week17-purgatory', weekData.purgatory, ['team', 'proj_score', 'score', 'final_result']);
+                updateTable('week17-toilet', weekData.toilet, ['team', 'proj_score', 'score', 'final_result']);
+            } else {
+                updateTable('week17-championship', [], ['team', 'proj_score', 'score', 'final_result', 'payout']);
+                updateTable('week17-purgatory', [], ['team', 'proj_score', 'score', 'final_result']);
+                updateTable('week17-toilet', [], ['team', 'proj_score', 'score', 'final_result']);
+            }
         }
 
         function updateStandings(standings, initialStandings) {
@@ -7096,7 +7120,7 @@
             } else {
                 container.innerHTML = `
                     <div style="color: #79C4FF; padding: 15px; text-align: center; font-style: italic;">
-                        ${currentSeason === '2025' ? '2025 season not started' : 'Season not complete'}
+                        Week 13 not complete yet
                     </div>
                 `;
             }
@@ -7133,7 +7157,7 @@
             } else {
                 container.innerHTML = `
                     <div style="color: #79C4FF; padding: 15px; text-align: center; font-style: italic;">
-                        ${currentSeason === '2025' ? '2025 season not started' : 'Duel of the Fates not complete'}
+                        Week 15 not complete yet
                     </div>
                 `;
             }
@@ -7165,7 +7189,7 @@
             } else {
                 container.innerHTML = `
                     <div style="color: #79C4FF; padding: 15px; text-align: center; font-style: italic;">
-                        ${currentSeason === '2025' ? '2025 season not started' : 'Championship not complete'}
+                        Week 17 not complete yet
                     </div>
                 `;
             }
@@ -7186,14 +7210,14 @@
             // }
         }
 
-        // UPDATE createEarningsChart to handle both seasons
+        // Create earnings chart for 2025 live data
         function createEarningsChart() {
             const ctx = document.getElementById('earningsChart');
             if (!ctx) return;
             
-            if (currentSeason === '2025' && (!payoutData || Object.keys(payoutData).length === 0)) {
-                // Handle empty 2025 state
-                showEmpty2025State();
+            // Check if we have payout data
+            if (!payoutData || Object.keys(payoutData).length === 0) {
+                console.log('No payout data available for chart');
                 return;
             }
             
@@ -7324,81 +7348,110 @@
             // Add weekly winnings
             if (payoutData.weeklyWinners) {
                 Object.values(payoutData.weeklyWinners).forEach(winner => {
-                    if (teamEarnings[winner.team]) {
-                        teamEarnings[winner.team].totalEarnings += winner.payout;
-                        teamEarnings[winner.team].breakdown.push({
-                            category: `Week ${winner.week} High Score`,
-                            amount: winner.payout,
-                            details: `${winner.score.toFixed(2)} pts`
-                        });
+                    // Initialize team if not already in list
+                    if (!teamEarnings[winner.team]) {
+                        teamEarnings[winner.team] = {
+                            teamName: winner.team,
+                            totalEarnings: 0,
+                            breakdown: []
+                        };
                     }
+                    
+                    teamEarnings[winner.team].totalEarnings += winner.payout;
+                    teamEarnings[winner.team].breakdown.push({
+                        category: `Week ${winner.week} High Score`,
+                        amount: winner.payout,
+                        details: `${winner.score.toFixed(2)} pts`
+                    });
                 });
             }
             
             // Add season high score
             if (payoutData.seasonHighScore) {
                 const winner = payoutData.seasonHighScore;
-                if (teamEarnings[winner.team]) {
-                    teamEarnings[winner.team].totalEarnings += winner.payout;
-                    teamEarnings[winner.team].breakdown.push({
-                        category: 'Season High Score (Weeks 1-13)',
-                        amount: winner.payout,
-                        details: `${winner.totalScore.toFixed(2)} pts total`
-                    });
+                // Initialize team if not already in list
+                if (!teamEarnings[winner.team]) {
+                    teamEarnings[winner.team] = {
+                        teamName: winner.team,
+                        totalEarnings: 0,
+                        breakdown: []
+                    };
                 }
+                
+                teamEarnings[winner.team].totalEarnings += winner.payout;
+                teamEarnings[winner.team].breakdown.push({
+                    category: 'Season High Score (Weeks 1-13)',
+                    amount: winner.payout,
+                    details: `${winner.totalScore.toFixed(2)} pts total`
+                });
             }
             
             // Add Duel of the Fates
             if (payoutData.duelOfFates) {
                 Object.values(payoutData.duelOfFates).forEach(winner => {
-                    if (teamEarnings[winner.team]) {
-                        teamEarnings[winner.team].totalEarnings += winner.payout;
-                        teamEarnings[winner.team].breakdown.push({
-                            category: 'Duel of the Fates',
-                            amount: winner.payout,
-                            details: winner.category
-                        });
+                    // Initialize team if not already in list
+                    if (!teamEarnings[winner.team]) {
+                        teamEarnings[winner.team] = {
+                            teamName: winner.team,
+                            totalEarnings: 0,
+                            breakdown: []
+                        };
                     }
+                    
+                    teamEarnings[winner.team].totalEarnings += winner.payout;
+                    teamEarnings[winner.team].breakdown.push({
+                        category: 'Duel of the Fates',
+                        amount: winner.payout,
+                        details: winner.category
+                    });
                 });
             }
             
             // Add championship
             if (payoutData.champion) {
                 const winner = payoutData.champion;
-                if (teamEarnings[winner.team]) {
-                    teamEarnings[winner.team].totalEarnings += winner.payout;
-                    teamEarnings[winner.team].breakdown.push({
-                        category: 'Shake Weight Champion',
-                        amount: winner.payout,
-                        details: 'Season champion'
-                    });
+                // Initialize team if not already in list
+                if (!teamEarnings[winner.team]) {
+                    teamEarnings[winner.team] = {
+                        teamName: winner.team,
+                        totalEarnings: 0,
+                        breakdown: []
+                    };
                 }
+                
+                teamEarnings[winner.team].totalEarnings += winner.payout;
+                teamEarnings[winner.team].breakdown.push({
+                    category: 'Shake Weight Champion',
+                    amount: winner.payout,
+                    details: 'Season champion'
+                });
             }
             
             return Object.values(teamEarnings);
         }
 
-        // UPDATE initializePayouts to start with 2024 demo data
-        function initializePayouts() {
-            console.log('Initializing payouts system...');
+        // Initialize payouts with 2025 live data
+        async function initializePayouts() {
+            console.log('Initializing payouts system with 2025 live data...');
             
-            // Start with 2024 demo data by default
-            currentSeason = '2024';
-            
-            // Ensure toggle buttons are set correctly
-            document.querySelectorAll('.toggle-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            
-            const season2024Btn = document.getElementById('season-2024');
-            if (season2024Btn) {
-                season2024Btn.classList.add('active');
+            // If no data yet, fetch from API
+            if (!window.latestData) {
+                console.log('No WebSocket data yet, fetching from API...');
+                try {
+                    const response = await fetch('/api/data');
+                    const data = await response.json();
+                    window.latestData = data;
+                    currentData = data;
+                    console.log('Data fetched from API:', data);
+                } catch (error) {
+                    console.error('Failed to fetch data from API:', error);
+                }
             }
             
-            // Load demo data
-            loadDemo2024Data();
+            // Load 2025 live data
+            load2025LiveData();
             
-            console.log('Payouts initialized with 2024 demo data');
+            console.log('Payouts initialized successfully');
         }
 
         // ADD modal functionality
@@ -7466,54 +7519,52 @@
             }
         }, true);
 
-        // ADD season summary functionality
+        // Display season summary for 2025
         function displaySeasonSummary() {
-            if (currentSeason === '2024') {
-                const totalPayout = calculateTotalPayout();
-                const winners = countUniqueWinners();
-                
-                // Add summary to the payouts container
-                const summaryDiv = document.createElement('div');
-                summaryDiv.id = 'season-summary';
-                summaryDiv.style.cssText = `
-                    background: rgba(255, 215, 0, 0.1);
-                    border-radius: 8px;
-                    padding: 15px;
-                    margin: 15px 0;
-                    border: 1px solid rgba(255, 215, 0, 0.3);
-                    text-align: center;
-                `;
-                summaryDiv.innerHTML = `
-                    <div style="color: #FFD700; font-weight: bold; font-size: 16px; margin-bottom: 10px;">
-                        📊 2024 Season Summary
+            const totalPayout = calculateTotalPayout();
+            const winners = countUniqueWinners();
+            
+            // Remove existing summary
+            const existingSummary = document.getElementById('season-summary');
+            if (existingSummary) {
+                existingSummary.remove();
+            }
+            
+            // Add summary to the payouts container
+            const summaryDiv = document.createElement('div');
+            summaryDiv.id = 'season-summary';
+            summaryDiv.style.cssText = `
+                background: rgba(255, 215, 0, 0.1);
+                border-radius: 8px;
+                padding: 15px;
+                margin: 15px 0;
+                border: 1px solid rgba(255, 215, 0, 0.3);
+                text-align: center;
+            `;
+            summaryDiv.innerHTML = `
+                <div style="color: #FFD700; font-weight: bold; font-size: 16px; margin-bottom: 10px;">
+                    📊 2025 Season Summary
+                </div>
+                <div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 15px;">
+                    <div style="color: #B4E0FF;">
+                        <div style="font-size: 24px; font-weight: bold; color: #FFD700;">$${totalPayout}</div>
+                        <div style="font-size: 12px;">Total Paid Out</div>
                     </div>
-                    <div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 15px;">
-                        <div style="color: #B4E0FF;">
-                            <div style="font-size: 24px; font-weight: bold; color: #FFD700;">$${totalPayout}</div>
-                            <div style="font-size: 12px;">Total Paid Out</div>
-                        </div>
-                        <div style="color: #B4E0FF;">
-                            <div style="font-size: 24px; font-weight: bold; color: #26A69A;">${winners}</div>
-                            <div style="font-size: 12px;">Teams Won Money</div>
-                        </div>
-                        <div style="color: #B4E0FF;">
-                            <div style="font-size: 24px; font-weight: bold; color: #559AE0;">13</div>
-                            <div style="font-size: 12px;">Weeks Completed</div>
-                        </div>
+                    <div style="color: #B4E0FF;">
+                        <div style="font-size: 24px; font-weight: bold; color: #26A69A;">${winners}</div>
+                        <div style="font-size: 12px;">Teams Won Money</div>
                     </div>
-                `;
-                
-                // Insert after the season toggle
-                const toggleContainer = document.querySelector('.season-toggle-container');
-                if (toggleContainer && !document.getElementById('season-summary')) {
-                    toggleContainer.after(summaryDiv);
-                }
-            } else {
-                // Remove summary for 2025
-                const existingSummary = document.getElementById('season-summary');
-                if (existingSummary) {
-                    existingSummary.remove();
-                }
+                    <div style="color: #B4E0FF;">
+                        <div style="font-size: 24px; font-weight: bold; color: #559AE0;">${payoutData.currentWeek || 0}</div>
+                        <div style="font-size: 12px;">Weeks Completed</div>
+                    </div>
+                </div>
+            `;
+            
+            // Insert after the season status container
+            const statusContainer = document.querySelector('.season-status-container');
+            if (statusContainer && !document.getElementById('season-summary')) {
+                statusContainer.after(summaryDiv);
             }
         }
 
@@ -7623,208 +7674,39 @@
         // Call this immediately
         checkForConflicts();
 
-        // ADD this comprehensive 2024 demo data
-        const demo2024Data = {
-            weeklyWinners: {
-                1: { team: "Sponsored by Copper Fit", score: 156.84, week: 1, payout: 25, date: "2024-09-10" },
-                2: { team: "The Microplastic Miracles", score: 178.92, week: 2, payout: 25, date: "2024-09-17" },
-                3: { team: "Sam's Lobos", score: 145.67, week: 3, payout: 25, date: "2024-09-24" },
-                4: { team: "Scarecrow Boat", score: 163.45, week: 4, payout: 25, date: "2024-10-01" },
-                5: { team: "MallCop", score: 189.23, week: 5, payout: 25, date: "2024-10-08" },
-                6: { team: "Bud Olsons Mustache", score: 154.78, week: 6, payout: 25, date: "2024-10-15" },
-                7: { team: "Waddle House", score: 171.34, week: 7, payout: 25, date: "2024-10-22" },
-                8: { team: "The Microplastic Miracles", score: 182.91, week: 8, payout: 25, date: "2024-10-29" },
-                9: { team: "Sponsored by Copper Fit", score: 167.56, week: 9, payout: 25, date: "2024-11-05" },
-                10: { team: "Nabers-Hood Watch", score: 159.84, week: 10, payout: 25, date: "2024-11-12" },
-                11: { team: "Sam's Lobos", score: 174.62, week: 11, payout: 25, date: "2024-11-19" },
-                12: { team: "Bishop Sycamore", score: 161.45, week: 12, payout: 25, date: "2024-11-26" },
-                13: { team: "The Microplastic Miracles", score: 183.78, week: 13, payout: 25, date: "2024-12-03" }
-            },
-            seasonHighScore: {
-                team: "The Microplastic Miracles",
-                totalScore: 2147.83,
-                payout: 75,
-                date: "2024-12-03"
-            },
-            duelOfFates: {
-                "Sponsored by Copper Fit": {
-                    team: "Sponsored by Copper Fit",
-                    payout: 60,
-                    category: "Duel of the Fates Winner",
-                    date: "2024-12-17"
-                },
-                "Scarecrow Boat": {
-                    team: "Scarecrow Boat",
-                    payout: 40,
-                    category: "Duel of the Fates Runner-up",
-                    date: "2024-12-17"
-                }
-            },
-            champion: {
-                team: "The Microplastic Miracles",
-                payout: 700,
-                date: "2024-12-31"
-            },
-            lastUpdated: "2024-12-31T23:59:59"
-        };
-
-        // Current season state
-        let currentSeason = '2024';  // Start with 2024 demo data
+        // Current season state - 2025 Live Data Only
+        const currentSeason = '2025';
         let payoutData = {};
         let earningsChart = null;
 
-        // ADD this season switching function
-        function switchSeason(season) {
-            console.log('Switching to season:', season);
-            
-            // Show loading state
-            showSeasonSwitchLoading();
-            
-            currentSeason = season;
-            
-            // Update toggle buttons with animation
-            document.querySelectorAll('.toggle-btn').forEach(btn => {
-                btn.classList.remove('active');
-                btn.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    btn.style.transform = 'scale(1)';
-                }, 150);
-            });
-            
-            const activeBtn = document.getElementById(`season-${season}`);
-            if (activeBtn) {
-                setTimeout(() => {
-                    activeBtn.classList.add('active');
-                }, 100);
-            }
-            
-            // Update status text with animation
-            const statusElement = document.getElementById('season-status');
-            if (statusElement) {
-                statusElement.style.opacity = '0';
-                setTimeout(() => {
-                    if (season === '2024') {
-                        statusElement.textContent = 'Showing 2024 demo data - Full season completed';
-                        statusElement.style.color = '#26A69A';
-                    } else {
-                        statusElement.textContent = 'Showing 2025 live data - Season starts September 9, 2025';
-                        statusElement.style.color = '#79C4FF';
-                    }
-                    statusElement.style.opacity = '1';
-                }, 200);
-            }
-            
-            // Load data with delay for smooth transition
-            setTimeout(() => {
-                if (season === '2024') {
-                    loadDemo2024Data();
-                } else {
-                    load2025LiveData();
-                }
-                hideSeasonSwitchLoading();
-            }, 300);
-        }
-
-        function loadDemo2024Data() {
-            console.log('Loading 2024 demo data...');
-            
-            // Use the demo data
-            payoutData = demo2024Data;
-            
-            // Update displays
-            updatePayoutDisplay();
-            createEarningsChart();
-            updateLastUpdatedTime('2024-12-31T23:59:59');
-            displaySeasonSummary();
-            
-            console.log('2024 demo data loaded successfully');
-        }
+        // Load 2025 live data function
 
         function load2025LiveData() {
             console.log('Loading 2025 live data...');
             
-            // Remove summary
-            displaySeasonSummary();
-            
-            // Use live data from your API or show empty state
+            // Use live data from API
             if (window.latestData && window.latestData.payouts) {
                 payoutData = window.latestData.payouts;
+                console.log('Payout data loaded:', payoutData);
                 updatePayoutDisplay();
                 createEarningsChart();
                 updateLastUpdatedTime();
+                displaySeasonSummary();
             } else {
-                // Show empty 2025 state
-                showEmpty2025State();
+                console.warn('No payout data available yet');
+                // Show loading message
+                const containers = ['weekly-winners', 'season-winner', 'duel-winners', 'champion-winner'];
+                containers.forEach(id => {
+                    const element = document.getElementById(id);
+                    if (element) {
+                        element.innerHTML = '<div style="color: #79C4FF; padding: 15px; text-align: center;">Loading 2025 data...</div>';
+                    }
+                });
             }
             
-            console.log('2025 live data loaded');
+            console.log('2025 live data loading complete');
         }
 
-        function showEmpty2025State() {
-            // Clear all sections for 2025
-            const containers = ['weekly-winners', 'season-winner', 'duel-winners', 'champion-winner'];
-            
-            containers.forEach(id => {
-                const element = document.getElementById(id);
-                if (element) {
-                    element.innerHTML = `
-                        <div style="color: #79C4FF; padding: 15px; text-align: center; font-style: italic;">
-                            <div style="font-size: 24px; margin-bottom: 8px;">📅</div>
-                            <div>2025 season hasn't started yet</div>
-                            <div style="font-size: 12px; margin-top: 4px; opacity: 0.7;">Check back after September 9, 2025</div>
-                        </div>
-                    `;
-                }
-            });
-            
-            // Clear chart
-            if (earningsChart) {
-                earningsChart.destroy();
-                earningsChart = null;
-            }
-            
-            const chartCanvas = document.getElementById('earningsChart');
-            if (chartCanvas) {
-                const ctx = chartCanvas.getContext('2d');
-                ctx.clearRect(0, 0, chartCanvas.width, chartCanvas.height);
-                
-                // Draw empty state message
-                ctx.fillStyle = '#79C4FF';
-                ctx.font = '16px Arial';
-                ctx.textAlign = 'center';
-                ctx.fillText('2025 Earnings Chart', chartCanvas.width / 2, chartCanvas.height / 2 - 10);
-                ctx.font = '12px Arial';
-                ctx.fillText('Will populate during 2025 season', chartCanvas.width / 2, chartCanvas.height / 2 + 10);
-            }
-            
-            updateLastUpdatedTime('N/A - 2025 season not started');
-        }
-
-        function showSeasonSwitchLoading() {
-            const containers = ['weekly-winners', 'season-winner', 'duel-winners', 'champion-winner'];
-            containers.forEach(id => {
-                const element = document.getElementById(id);
-                if (element) {
-                    element.style.opacity = '0.5';
-                    element.innerHTML = `
-                        <div style="color: #79C4FF; padding: 15px; text-align: center;">
-                            <div style="font-size: 18px; margin-bottom: 8px;">⏳</div>
-                            <div>Switching seasons...</div>
-                        </div>
-                    `;
-                }
-            });
-        }
-
-        function hideSeasonSwitchLoading() {
-            const containers = ['weekly-winners', 'season-winner', 'duel-winners', 'champion-winner'];
-            containers.forEach(id => {
-                const element = document.getElementById(id);
-                if (element) {
-                    element.style.opacity = '1';
-                }
-            });
-        }
 
         // Add comprehensive error checking
         function debugPayoutsSetup() {
