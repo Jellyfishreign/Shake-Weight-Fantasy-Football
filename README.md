@@ -1,0 +1,148 @@
+# The Quantum Gauntlet - Playoff Dashboard
+
+A real-time visualization dashboard for fantasy football playoff data from the Sleeper API. This application provides a beautiful, modern web interface that automatically updates with live playoff data.
+
+## Features
+
+- **Real-time Updates**: Data automatically refreshes every minute via WebSocket connections
+- **Modern UI**: Beautiful, responsive design with smooth animations and hover effects
+- **Multiple Views**: Separate tabs for each playoff week and combined statistics
+- **Live Standings**: Real-time team standings with position badges
+- **Mobile Responsive**: Works perfectly on desktop, tablet, and mobile devices
+
+## Screenshots
+
+The dashboard includes:
+- **Standings View**: Shows all teams with their playoff positions and pre-total scores
+- **Week 14**: Bye teams, playoff teams, and wildcard teams performance
+- **Week 15**: Updated performance data for all playoff groups
+- **Combined 14+15**: Combined scores from weeks 14 and 15
+- **Week 16**: Conference championship, purgatory, and toilet bowl
+- **Week 17**: Final championship, purgatory, and toilet bowl results
+
+## Setup Instructions
+
+### Prerequisites
+
+- Python 3.7 or higher
+- Access to the Sleeper API
+- Google Sheets credentials (for the original data export functionality)
+
+### Installation
+
+1. **Clone or download the project files**
+
+2. **Install Python dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Configure your credentials**:
+   - Update the `username` variable in `app.py` with your Sleeper username
+   - Update the `target_league_name` variable with your league name
+   - If you want to keep the Google Sheets functionality, ensure your credentials file is in the correct path
+
+4. **Run the application**:
+   ```bash
+   python app.py
+   ```
+
+5. **Access the dashboard**:
+   Open your web browser and navigate to `http://localhost:5000`
+
+## Configuration
+
+### Sleeper API Settings
+
+Edit the following variables in `app.py`:
+
+```python
+username = "LactatingLtinas"  # Your Sleeper username
+season = "2024"               # NFL season
+target_league_name = "The League To Be Named Later"  # Your league name
+```
+
+### Update Frequency
+
+The application updates data every 60 seconds by default. You can modify this in the `background_update()` function:
+
+```python
+time.sleep(60)  # Change this value to adjust update frequency
+```
+
+## File Structure
+
+```
+├── app.py                    # Main Flask application
+├── templates/
+│   └── index.html           # Web interface template
+├── requirements.txt          # Python dependencies
+├── README.md               # This file
+└── The_Quantum_Gauntlet_Import.py  # Original data processing script
+```
+
+## How It Works
+
+1. **Data Fetching**: The application fetches data from the Sleeper API for all playoff weeks
+2. **Processing**: Processes the data using the same logic as your original script
+3. **Real-time Updates**: Uses WebSocket connections to push updates to connected clients
+4. **Visualization**: Displays the data in an organized, tabbed interface
+
+## API Endpoints
+
+- `GET /`: Main dashboard page
+- `GET /api/data`: JSON endpoint for current data
+- WebSocket: Real-time data updates
+
+## Troubleshooting
+
+### Common Issues
+
+1. **"League not found" error**:
+   - Verify your `username` and `target_league_name` are correct
+   - Ensure you have access to the league
+
+2. **Connection errors**:
+   - Check your internet connection
+   - Verify the Sleeper API is accessible
+
+3. **Port already in use**:
+   - Change the port in `app.py`: `socketio.run(app, debug=True, host='0.0.0.0', port=5001)`
+
+### Debug Mode
+
+The application runs in debug mode by default. For production, set `debug=False` in the `socketio.run()` call.
+
+## Customization
+
+### Styling
+
+The dashboard uses CSS custom properties and can be easily customized by modifying the styles in `templates/index.html`.
+
+### Data Structure
+
+The application processes data into the following structure:
+
+```python
+{
+    'timestamp': '12/15/2024 14:30 CST',
+    'week14': {
+        'bye': [{'team': '(1) Team Name', 'score': '125.50'}],
+        'playoff': [...],
+        'wildcard': [...]
+    },
+    'week15': {...},
+    'combined': {...},
+    'week16': {...},
+    'week17': {...},
+    'standings': [{'seed': 1, 'team': 'Team Name', 'position': 'Bye', 'pre_total': '1500.25'}]
+}
+```
+
+## License
+
+This project is for personal use. Please respect the Sleeper API terms of service.
+
+## Support
+
+For issues or questions, please check the troubleshooting section above or review the original script logic in `The_Quantum_Gauntlet_Import.py`. 
