@@ -6,8 +6,4 @@ google-auth==2.23.0
 pytz==2023.3
 python-socketio==5.9.0
 python-engineio==4.7.1
-<<<<<<< HEAD
-gunicorn==21.2.0 
-=======
-gunicorn==21.2.0 
->>>>>>> f6ce21e4d4223072a5498dcfa481bb4d192b2b8c
+gunicorn==21.2.0

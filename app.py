@@ -860,8 +860,4 @@ if __name__ == '__main__':
     debug_mode = os.environ.get('DEBUG', 'False').lower() == 'true'
     
     # Run the app
-<<<<<<< HEAD
-    socketio.run(app, debug=debug_mode, host='0.0.0.0', port=port) 
-=======
-    socketio.run(app, debug=debug_mode, host='0.0.0.0', port=port) 
->>>>>>> f6ce21e4d4223072a5498dcfa481bb4d192b2b8c
+    socketio.run(app, debug=debug_mode, host='0.0.0.0', port=port)
