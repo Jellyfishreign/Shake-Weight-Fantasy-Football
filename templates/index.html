@@ -409,9 +409,13 @@
 
         .loading {
             text-align: center;
-            padding: 40px;
-            color: #4a5568;
-            font-size: 1.2rem;
+            padding: 60px 40px;
+            color: #FF3333;
+            font-size: 3rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 0 0 20px rgba(255, 51, 51, 0.5), 0 0 40px rgba(255, 51, 51, 0.3);
         }
 
         .error {
@@ -428,9 +432,18 @@
         }
 
         @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.7; }
-            100% { opacity: 1; }
+            0% { 
+                opacity: 1; 
+                transform: scale(1);
+            }
+            50% { 
+                opacity: 0.8; 
+                transform: scale(1.02);
+            }
+            100% { 
+                opacity: 1; 
+                transform: scale(1);
+            }
         }
 
         .payout {
@@ -4240,9 +4253,14 @@
         /* Loading and Error States */
         .loading {
             text-align: center;
-            color: #79C4FF;
-            font-style: italic;
-            padding: 20px;
+            color: #FF3333;
+            font-style: normal;
+            font-weight: 900;
+            font-size: 3rem;
+            padding: 60px 20px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 0 0 20px rgba(255, 51, 51, 0.5), 0 0 40px rgba(255, 51, 51, 0.3);
         }
 
         .error {
@@ -4328,7 +4346,7 @@
         </div>
 
         <div id="loading" class="loading">
-            <div class="pulse">The Gauntlet Approaches...</div>
+            <div class="pulse">The Quantum Gauntlet Approaches....<br>December 4th, 2025</div>
         </div>
 
         <div id="error" class="error" style="display: none;"></div>
