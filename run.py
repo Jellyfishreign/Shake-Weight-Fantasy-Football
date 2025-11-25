@@ -75,4 +75,8 @@ def main():
         print("   Verify your Sleeper API credentials in app.py")
 
 if __name__ == "__main__":
+<<<<<<< HEAD
     main() 
+=======
+    main() 
+>>>>>>> f6ce21e4d4223072a5498dcfa481bb4d192b2b8c
