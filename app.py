@@ -859,5 +859,5 @@ if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5004))
     debug_mode = os.environ.get('DEBUG', 'False').lower() == 'true'
     
-    # Run the app
-    socketio.run(app, debug=debug_mode, host='0.0.0.0', port=port)
+    # Run the app (allow_unsafe_werkzeug needed for Render deployment)
+    socketio.run(app, debug=debug_mode, host='0.0.0.0', port=port, allow_unsafe_werkzeug=True)
