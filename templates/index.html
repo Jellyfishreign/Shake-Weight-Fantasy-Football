@@ -4644,7 +4644,7 @@
                             <button class="tab-button active" data-tab="rules-updates">Rules & Updates</button>
                             <button class="tab-button" data-tab="payouts-content">Payouts</button>
             <button class="tab-button" data-tab="quantum-gauntlet">The Quantum Gauntlet</button>
-            <button class="tab-button mobile-only-tab" data-tab="quantum-gauntlet-mobile" style="display: none;">The Quantum Gauntlet Mobile</button>
+            <button class="tab-button mobile-only-tab" id="quantum-gauntlet-mobile-tab" data-tab="quantum-gauntlet-mobile" style="display: none;">The Quantum Gauntlet Mobile</button>
             <button class="tab-button" data-tab="scoring-idp" style="display: none;">Scoring IDP</button>
             </div>
             <div class="tab-content" id="quantum-gauntlet" style="display: none;">
@@ -6299,6 +6299,20 @@
                     // Initialize specific tab content
                     if (tabId === 'payouts-content') {
                         initializePayouts();
+                    } else if (tabId === 'quantum-gauntlet-mobile') {
+                        setTimeout(() => {
+                            if (window.latestData) {
+                                updateMobileQuantumGauntlet(window.latestData);
+                            } else {
+                                fetch('/api/data')
+                                    .then(res => res.json())
+                                    .then(data => {
+                                        window.latestData = data;
+                                        updateMobileQuantumGauntlet(data);
+                                    })
+                                    .catch(err => console.error('Failed to fetch data:', err));
+                            }
+                        }, 100);
                     }
                 });
             });
@@ -9110,7 +9124,11 @@
             });
             
             // Show selected tab content
-            const tabContent = document.getElementById(tabName + '-content');
+            let tabContent = document.getElementById(tabName + '-content');
+            // Special case for mobile quantum gauntlet (doesn't have -content suffix)
+            if (!tabContent && tabName === 'quantum-gauntlet-mobile') {
+                tabContent = document.getElementById('quantum-gauntlet-mobile');
+            }
             if (tabContent) {
                 tabContent.style.display = 'block';
             }
@@ -9128,9 +9146,20 @@
                 setTimeout(() => {
                     initializePayouts();
                 }, 100);
-            } else if (tabName === 'quantum-gauntlet-mobile' && window.latestData) {
+            } else if (tabName === 'quantum-gauntlet-mobile') {
                 setTimeout(() => {
-                    updateMobileQuantumGauntlet(window.latestData);
+                    if (window.latestData) {
+                        updateMobileQuantumGauntlet(window.latestData);
+                    } else {
+                        console.log('Fetching data for mobile Quantum Gauntlet...');
+                        fetch('/api/data')
+                            .then(res => res.json())
+                            .then(data => {
+                                window.latestData = data;
+                                updateMobileQuantumGauntlet(data);
+                            })
+                            .catch(err => console.error('Failed to fetch data:', err));
+                    }
                 }, 100);
             } else if (tabName === 'rules-updates') {
                 // ADD this: Initialize tournament visualization
@@ -9146,9 +9175,17 @@
 
         // Mobile Quantum Gauntlet Functions
         function toggleMobileAccordion(week) {
+            console.log('Toggling accordion for week:', week);
             const body = document.getElementById(`accordion-week${week}`);
             const icon = document.getElementById(`icon-week${week}`);
             const item = document.querySelector(`.mobile-accordion-item[data-week="${week}"]`);
+            
+            console.log('Elements found:', {body: !!body, icon: !!icon, item: !!item});
+            
+            if (!body || !icon || !item) {
+                console.error('Missing accordion elements for week', week);
+                return;
+            }
             
             // Close all other accordions
             document.querySelectorAll('.mobile-accordion-body').forEach(b => {
@@ -9169,23 +9206,37 @@
             });
             
             // Toggle current accordion
-            if (body.style.display === 'none' || body.style.display === '') {
+            const isOpen = body.style.display === 'block';
+            console.log('Current state - isOpen:', isOpen);
+            
+            if (!isOpen) {
                 body.style.display = 'block';
                 body.classList.add('open');
                 item.classList.add('expanded');
                 icon.textContent = '▲';
+                console.log('Opened week', week);
             } else {
                 body.style.display = 'none';
                 body.classList.remove('open');
                 item.classList.remove('expanded');
                 icon.textContent = '▼';
+                console.log('Closed week', week);
             }
         }
+        
+        // Make sure the function is globally available
+        window.toggleMobileAccordion = toggleMobileAccordion;
 
         function updateMobileQuantumGauntlet(data) {
-            console.log('Updating mobile Quantum Gauntlet');
+            console.log('Updating mobile Quantum Gauntlet', data);
+            
+            if (!data) {
+                console.error('No data provided to updateMobileQuantumGauntlet');
+                return;
+            }
             
             const currentWeek = data?.payouts?.currentWeekInProgress || 0;
+            console.log('Current week for mobile view:', currentWeek);
             
             // Update week status indicators
             for (let week = 14; week <= 17; week++) {
