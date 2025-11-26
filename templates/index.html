@@ -1084,9 +1084,10 @@
         body.mobile-mode .container { max-width: 480px; margin: 0 auto; padding: 10px; }
         body.mobile-mode .header { padding: 12px; }
         body.mobile-mode .tabs-header { overflow-x: auto; white-space: nowrap; }
-        /* Hide Quantum Gauntlet and Payouts tabs on mobile */
-        body.mobile-mode .tabs-header .tab-button[data-tab="quantum-gauntlet"],
-        body.mobile-mode .tabs-header .tab-button[data-tab="payouts-content"] { display: none !important; }
+        /* Hide desktop Quantum Gauntlet tab on mobile, show mobile version */
+        body.mobile-mode .tabs-header .tab-button[data-tab="quantum-gauntlet"] { display: none !important; }
+        .mobile-only-tab { display: none; }
+        body.mobile-mode .mobile-only-tab { display: inline-block !important; }
         body.mobile-mode .tab-button { padding: 10px 12px; font-size: 0.9rem; }
         body.mobile-mode .subtabs-header {
             overflow-x: auto;
@@ -1181,11 +1182,297 @@
         body.mobile-mode #week17 .data-table th:last-child,
         body.mobile-mode #week17 .data-table td:last-child { width: 18%; }
 
+        /* Mobile Quantum Gauntlet specific responsive adjustments */
+        body.mobile-mode .mobile-gauntlet-container {
+            padding: 10px;
+        }
+
+        body.mobile-mode .mobile-accordion-header {
+            padding: 12px;
+        }
+
+        body.mobile-mode .week-number {
+            font-size: 16px;
+        }
+
+        body.mobile-mode .mobile-team-name {
+            font-size: 13px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 180px;
+        }
+
+        body.mobile-mode .mobile-team-score {
+            font-size: 16px;
+        }
+
+        body.mobile-mode .mobile-bracket-section {
+            padding: 10px;
+        }
+
+        @media (max-width: 480px) {
+            .mobile-gauntlet-container h1 {
+                font-size: 1.8rem;
+            }
+
+            .mobile-team-name {
+                font-size: 12px;
+                max-width: 140px;
+            }
+
+            .mobile-team-score {
+                font-size: 15px;
+            }
+
+            .mobile-accordion-header {
+                padding: 10px;
+            }
+        }
+
         /* Utility visibility helpers for mobile/desktop within viz */
         .desktop-only { display: inline; }
         .mobile-only { display: none; }
         #quantum-gauntlet-viz.is-mobile .desktop-only { display: none; }
         #quantum-gauntlet-viz.is-mobile .mobile-only { display: inline; }
+
+        /* Mobile Quantum Gauntlet Accordion Styles */
+        .mobile-gauntlet-container {
+            padding: 15px;
+            background: linear-gradient(135deg, #0a1f33 0%, #1a365d 100%);
+            min-height: 100vh;
+        }
+
+        .mobile-accordion-container {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        .mobile-accordion-item {
+            margin-bottom: 12px;
+            border-radius: 8px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .mobile-accordion-item.current-week {
+            border-color: #FFD700;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .mobile-accordion-item.completed {
+            border-color: #26A69A;
+        }
+
+        .mobile-accordion-item.upcoming {
+            opacity: 0.7;
+        }
+
+        .mobile-accordion-header {
+            padding: 16px;
+            background: rgba(45, 55, 72, 0.8);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            min-height: 44px;
+            user-select: none;
+        }
+
+        .mobile-accordion-item.current-week .mobile-accordion-header {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(255, 165, 0, 0.2) 100%);
+        }
+
+        .mobile-accordion-item.completed .mobile-accordion-header {
+            background: rgba(38, 166, 154, 0.2);
+        }
+
+        .week-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .week-number {
+            font-size: 18px;
+            font-weight: 700;
+            color: #FFD700;
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 2px;
+        }
+
+        .week-subtitle {
+            font-size: 12px;
+            color: #79C4FF;
+            font-weight: 500;
+        }
+
+        .accordion-status {
+            font-size: 11px;
+            color: #B4E0FF;
+            font-weight: 600;
+            text-transform: uppercase;
+            padding: 4px 8px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .accordion-icon {
+            font-size: 20px;
+            color: #FFD700;
+            transition: transform 0.3s ease;
+        }
+
+        .mobile-accordion-item.expanded .accordion-icon {
+            transform: rotate(180deg);
+        }
+
+        .mobile-accordion-body {
+            padding: 0;
+            background: rgba(10, 31, 51, 0.6);
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+
+        .mobile-accordion-body.open {
+            padding: 16px;
+            max-height: 2000px;
+        }
+
+        /* Mobile Bracket Components */
+        .mobile-bracket-section {
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-bracket-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #FFD700;
+            margin-bottom: 12px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .mobile-team-card {
+            background: linear-gradient(135deg, rgba(27, 59, 99, 0.5) 0%, rgba(45, 55, 72, 0.5) 100%);
+            border-radius: 6px;
+            padding: 10px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 3px solid #4299e1;
+            min-height: 44px;
+        }
+
+        .mobile-team-card.winner {
+            border-left-color: #FFD700;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 165, 0, 0.1) 100%);
+        }
+
+        .mobile-team-card.bye {
+            border-left-color: #48bb78;
+        }
+
+        .mobile-team-card.eliminated {
+            opacity: 0.6;
+            border-left-color: #718096;
+        }
+
+        .mobile-team-info {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            flex: 1;
+        }
+
+        .mobile-team-seed {
+            font-size: 11px;
+            color: #FFD700;
+            font-weight: 700;
+        }
+
+        .mobile-team-name {
+            font-size: 14px;
+            color: #B4E0FF;
+            font-weight: 600;
+        }
+
+        .mobile-team-status {
+            font-size: 10px;
+            color: #79C4FF;
+            font-style: italic;
+        }
+
+        .mobile-team-score {
+            font-size: 18px;
+            color: #FFD700;
+            font-weight: 700;
+            text-align: right;
+        }
+
+        .mobile-vs-divider {
+            text-align: center;
+            color: #FF3333;
+            font-weight: 700;
+            font-size: 16px;
+            margin: 8px 0;
+            letter-spacing: 2px;
+        }
+
+        .mobile-bracket-connector {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 8px 0;
+        }
+
+        .mobile-connector-line {
+            width: 2px;
+            height: 20px;
+            background: linear-gradient(180deg, #4299e1 0%, #FFD700 100%);
+        }
+
+        .mobile-advancement-box {
+            background: rgba(66, 153, 225, 0.2);
+            border: 2px solid #4299e1;
+            border-radius: 6px;
+            padding: 10px;
+            margin-top: 12px;
+            text-align: center;
+        }
+
+        .mobile-advancement-title {
+            font-size: 12px;
+            color: #79C4FF;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .mobile-payout-badge {
+            display: inline-block;
+            background: rgba(255, 215, 0, 0.2);
+            color: #FFD700;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 700;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .mobile-track-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.2) 50%, transparent 100%);
+            margin: 16px 0;
+        }
 
         /* ==============================
            Quantum Gauntlet: Mobile Mode
@@ -4356,6 +4643,7 @@
                             <button class="tab-button active" data-tab="rules-updates">Rules & Updates</button>
                             <button class="tab-button" data-tab="payouts-content">Payouts</button>
             <button class="tab-button" data-tab="quantum-gauntlet">The Quantum Gauntlet</button>
+            <button class="tab-button mobile-only-tab" data-tab="quantum-gauntlet-mobile" style="display: none;">The Quantum Gauntlet Mobile</button>
             <button class="tab-button" data-tab="scoring-idp" style="display: none;">Scoring IDP</button>
             </div>
             <div class="tab-content" id="quantum-gauntlet" style="display: none;">
@@ -5521,6 +5809,81 @@
                     </div>
                 </div>
             </div>
+            <div class="tab-content" id="quantum-gauntlet-mobile" style="display: none;">
+                <div class="mobile-gauntlet-container">
+                    <h1 style="text-align: center; color: #FFD700; font-family: 'Black Ops One', sans-serif; margin-bottom: 20px;">THE QUANTUM GAUNTLET</h1>
+                    
+                    <!-- Accordion for Weeks 14-17 -->
+                    <div class="mobile-accordion-container">
+                        
+                        <!-- Week 14 Accordion -->
+                        <div class="mobile-accordion-item" data-week="14">
+                            <div class="mobile-accordion-header" onclick="toggleMobileAccordion(14)">
+                                <div class="week-info">
+                                    <span class="week-number">WEEK 14</span>
+                                    <span class="week-subtitle">Wildcard Round</span>
+                                </div>
+                                <div class="accordion-status" id="status-week14"></div>
+                                <span class="accordion-icon" id="icon-week14">▼</span>
+                            </div>
+                            <div class="mobile-accordion-body" id="accordion-week14" style="display: none;">
+                                <!-- Week 14 content will be populated here -->
+                                <div id="mobile-week14-content"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Week 15 Accordion -->
+                        <div class="mobile-accordion-item" data-week="15">
+                            <div class="mobile-accordion-header" onclick="toggleMobileAccordion(15)">
+                                <div class="week-info">
+                                    <span class="week-number">WEEK 15</span>
+                                    <span class="week-subtitle">Divisional Round</span>
+                                </div>
+                                <div class="accordion-status" id="status-week15"></div>
+                                <span class="accordion-icon" id="icon-week15">▼</span>
+                            </div>
+                            <div class="mobile-accordion-body" id="accordion-week15" style="display: none;">
+                                <!-- Week 15 content will be populated here -->
+                                <div id="mobile-week15-content"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Week 16 Accordion -->
+                        <div class="mobile-accordion-item" data-week="16">
+                            <div class="mobile-accordion-header" onclick="toggleMobileAccordion(16)">
+                                <div class="week-info">
+                                    <span class="week-number">WEEK 16</span>
+                                    <span class="week-subtitle">Conference Championship</span>
+                                </div>
+                                <div class="accordion-status" id="status-week16"></div>
+                                <span class="accordion-icon" id="icon-week16">▼</span>
+                            </div>
+                            <div class="mobile-accordion-body" id="accordion-week16" style="display: none;">
+                                <!-- Week 16 content will be populated here -->
+                                <div id="mobile-week16-content"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Week 17 Accordion -->
+                        <div class="mobile-accordion-item" data-week="17">
+                            <div class="mobile-accordion-header" onclick="toggleMobileAccordion(17)">
+                                <div class="week-info">
+                                    <span class="week-number">WEEK 17</span>
+                                    <span class="week-subtitle">Championship Game</span>
+                                </div>
+                                <div class="accordion-status" id="status-week17"></div>
+                                <span class="accordion-icon" id="icon-week17">▼</span>
+                            </div>
+                            <div class="mobile-accordion-body" id="accordion-week17" style="display: none;">
+                                <!-- Week 17 content will be populated here -->
+                                <div id="mobile-week17-content"></div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+            
             <div class="tab-content" id="scoring-idp" style="display: none;">
                 <div class="idp-scoring-section">
                     <h2>IDP Scoring System</h2>
@@ -5623,6 +5986,13 @@
             if (payoutsTab && payoutsTab.style.display !== 'none') {
                 console.log('Reloading payouts with new data');
                 load2025LiveData();
+            }
+            
+            // If on mobile Quantum Gauntlet tab, reload the data
+            const mobileGauntletTab = document.getElementById('quantum-gauntlet-mobile');
+            if (mobileGauntletTab && mobileGauntletTab.style.display !== 'none') {
+                console.log('Reloading mobile Quantum Gauntlet with new data');
+                updateMobileQuantumGauntlet(data);
             }
         });
 
@@ -8757,6 +9127,10 @@
                 setTimeout(() => {
                     initializePayouts();
                 }, 100);
+            } else if (tabName === 'quantum-gauntlet-mobile' && window.latestData) {
+                setTimeout(() => {
+                    updateMobileQuantumGauntlet(window.latestData);
+                }, 100);
             } else if (tabName === 'rules-updates') {
                 // ADD this: Initialize tournament visualization
                 setTimeout(() => {
@@ -8768,6 +9142,397 @@
                 }, 100);
             }
         }
+
+        // Mobile Quantum Gauntlet Functions
+        function toggleMobileAccordion(week) {
+            const body = document.getElementById(`accordion-week${week}`);
+            const icon = document.getElementById(`icon-week${week}`);
+            const item = document.querySelector(`.mobile-accordion-item[data-week="${week}"]`);
+            
+            // Close all other accordions
+            document.querySelectorAll('.mobile-accordion-body').forEach(b => {
+                if (b !== body) {
+                    b.style.display = 'none';
+                    b.classList.remove('open');
+                }
+            });
+            document.querySelectorAll('.mobile-accordion-item').forEach(i => {
+                if (i !== item) {
+                    i.classList.remove('expanded');
+                }
+            });
+            document.querySelectorAll('.accordion-icon').forEach(ic => {
+                if (ic !== icon) {
+                    ic.textContent = '▼';
+                }
+            });
+            
+            // Toggle current accordion
+            if (body.style.display === 'none' || body.style.display === '') {
+                body.style.display = 'block';
+                body.classList.add('open');
+                item.classList.add('expanded');
+                icon.textContent = '▲';
+            } else {
+                body.style.display = 'none';
+                body.classList.remove('open');
+                item.classList.remove('expanded');
+                icon.textContent = '▼';
+            }
+        }
+
+        function updateMobileQuantumGauntlet(data) {
+            console.log('Updating mobile Quantum Gauntlet');
+            
+            const currentWeek = data?.payouts?.currentWeekInProgress || 0;
+            
+            // Update week status indicators
+            for (let week = 14; week <= 17; week++) {
+                const statusEl = document.getElementById(`status-week${week}`);
+                const item = document.querySelector(`.mobile-accordion-item[data-week="${week}"]`);
+                
+                if (item) {
+                    item.classList.remove('current-week', 'completed', 'upcoming');
+                    
+                    if (week === currentWeek) {
+                        item.classList.add('current-week');
+                        if (statusEl) statusEl.textContent = 'IN PROGRESS';
+                    } else if (week < currentWeek) {
+                        item.classList.add('completed');
+                        if (statusEl) statusEl.textContent = 'COMPLETE';
+                    } else {
+                        item.classList.add('upcoming');
+                        if (statusEl) statusEl.textContent = 'UPCOMING';
+                    }
+                }
+            }
+            
+            // Populate each week's content
+            populateMobileWeek14(data.week14, data.week15);
+            populateMobileWeek15(data.week15);
+            populateMobileWeek16(data.week16);
+            populateMobileWeek17(data.week17);
+            
+            // Auto-expand current week
+            if (currentWeek >= 14 && currentWeek <= 17) {
+                setTimeout(() => toggleMobileAccordion(currentWeek), 300);
+            }
+        }
+
+        function populateMobileWeek14(week14Data, week15Data) {
+            const container = document.getElementById('mobile-week14-content');
+            if (!container) return;
+            
+            const currentWeek = window.latestData?.payouts?.currentWeekInProgress || 0;
+            if (currentWeek < 14) {
+                container.innerHTML = '<div style="color: #79C4FF; text-align: center; padding: 20px;">Week 14 starts December 12, 2024</div>';
+                return;
+            }
+            
+            let html = '';
+            
+            // Duel of the Fates
+            html += '<div class="mobile-bracket-section">';
+            html += '<div class="mobile-bracket-title">⚔️ Duel of the Fates</div>';
+            if (week14Data.bye && week14Data.bye.length >= 2) {
+                week14Data.bye.slice(0, 2).forEach((team, idx) => {
+                    html += `
+                        <div class="mobile-team-card bye">
+                            <div class="mobile-team-info">
+                                <div class="mobile-team-seed">${team.team.match(/\((\d+)\)/)?.[1] || 'Seed'}</div>
+                                <div class="mobile-team-name">${team.team.replace(/\(\d+\)\s*/, '')}</div>
+                                <div class="mobile-team-status">Bye Week - Auto Advance</div>
+                            </div>
+                            <div class="mobile-team-score">${team.score}</div>
+                        </div>
+                    `;
+                    if (idx === 0) html += '<div class="mobile-vs-divider">VS</div>';
+                });
+            }
+            html += '</div>';
+            
+            // Wildcard + Divisional
+            html += '<div class="mobile-track-divider"></div>';
+            html += '<div class="mobile-bracket-section">';
+            html += '<div class="mobile-bracket-title">🏈 Wildcard Battle</div>';
+            
+            // Seeds 3-6
+            if (week14Data.playoff && week14Data.playoff.length > 0) {
+                html += '<div style="font-size: 11px; color: #79C4FF; margin-bottom: 8px; text-align: center;">Seeds 3-6: Divisional Round</div>';
+                week14Data.playoff.slice(0, 4).forEach(team => {
+                    html += `
+                        <div class="mobile-team-card">
+                            <div class="mobile-team-info">
+                                <div class="mobile-team-seed">${team.team.match(/\((\d+)\)/)?.[1] || 'Seed'}</div>
+                                <div class="mobile-team-name">${team.team.replace(/\(\d+\)\s*/, '')}</div>
+                            </div>
+                            <div class="mobile-team-score">${team.score}</div>
+                        </div>
+                    `;
+                });
+            }
+            
+            // Seeds 7-12 Wildcard
+            if (week14Data.wildcard && week14Data.wildcard.length > 0) {
+                html += '<div style="font-size: 11px; color: #79C4FF; margin: 12px 0 8px; text-align: center;">Seeds 7-12: Winner Advances</div>';
+                const sortedWildcard = [...week14Data.wildcard].sort((a, b) => parseFloat(b.score) - parseFloat(a.score));
+                sortedWildcard.forEach((team, idx) => {
+                    const isWinner = idx === 0;
+                    html += `
+                        <div class="mobile-team-card ${isWinner ? 'winner' : 'eliminated'}">
+                            <div class="mobile-team-info">
+                                <div class="mobile-team-seed">${team.team.match(/\((\d+)\)/)?.[1] || 'Seed'}</div>
+                                <div class="mobile-team-name">${team.team.replace(/\(\d+\)\s*/, '')}</div>
+                                <div class="mobile-team-status">${isWinner ? '✓ Wildcard Winner' : '✗ Eliminated'}</div>
+                            </div>
+                            <div class="mobile-team-score">${team.score}</div>
+                        </div>
+                    `;
+                });
+            }
+            html += '</div>';
+            
+            // Toilet Bowl
+            html += '<div class="mobile-track-divider"></div>';
+            html += '<div class="mobile-bracket-section">';
+            html += '<div class="mobile-bracket-title">🚽 Toilet Bowl</div>';
+            html += '<div style="font-size: 11px; color: #79C4FF; text-align: center; font-style: italic; padding: 8px;">Consolation Bracket</div>';
+            html += '</div>';
+            
+            container.innerHTML = html;
+        }
+
+        function populateMobileWeek15(week15Data) {
+            const container = document.getElementById('mobile-week15-content');
+            if (!container) return;
+            
+            const currentWeek = window.latestData?.payouts?.currentWeekInProgress || 0;
+            if (currentWeek < 15) {
+                container.innerHTML = '<div style="color: #79C4FF; text-align: center; padding: 20px;">Week 15 starts December 19, 2024</div>';
+                return;
+            }
+            
+            let html = '';
+            
+            // Duel of the Fates Results
+            html += '<div class="mobile-bracket-section">';
+            html += '<div class="mobile-bracket-title">⚔️ Duel Results</div>';
+            if (week15Data.bye_result && week15Data.bye_result.length >= 2) {
+                week15Data.bye_result.forEach((team, idx) => {
+                    html += `
+                        <div class="mobile-team-card winner">
+                            <div class="mobile-team-info">
+                                <div class="mobile-team-seed">${team.team.match(/\((\d+)\)/)?.[1] || 'Seed'}</div>
+                                <div class="mobile-team-name">${team.team.replace(/\(\d+\)\s*/, '')}</div>
+                                <div class="mobile-team-status">→ ${team.next_week}</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div class="mobile-team-score">${team.score}</div>
+                                <div class="mobile-payout-badge" style="font-size: 11px; margin-top: 4px;">${team.payout}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            html += '</div>';
+            
+            // Playoff Results
+            html += '<div class="mobile-track-divider"></div>';
+            html += '<div class="mobile-bracket-section">';
+            html += '<div class="mobile-bracket-title">🏈 Playoff Results</div>';
+            if (week15Data.playoff_result && week15Data.playoff_result.length > 0) {
+                week15Data.playoff_result.forEach((team, idx) => {
+                    const isAdvancing = team.next_week === 'Conf Champ';
+                    html += `
+                        <div class="mobile-team-card ${isAdvancing ? 'winner' : 'eliminated'}">
+                            <div class="mobile-team-info">
+                                <div class="mobile-team-seed">${team.team.match(/\((\d+)\)/)?.[1] || 'Seed'}</div>
+                                <div class="mobile-team-name">${team.team.replace(/\(\d+\)\s*/, '')}</div>
+                                <div class="mobile-team-status">${isAdvancing ? '✓' : '✗'} ${team.next_week}</div>
+                            </div>
+                            <div class="mobile-team-score">${team.score}</div>
+                        </div>
+                    `;
+                });
+            }
+            html += '</div>';
+            
+            // Toilet Bowl
+            html += '<div class="mobile-track-divider"></div>';
+            html += '<div class="mobile-bracket-section">';
+            html += '<div class="mobile-bracket-title">🚽 Toilet Bowl</div>';
+            if (week15Data.toilet_result && week15Data.toilet_result.length > 0) {
+                week15Data.toilet_result.slice(0, 5).forEach(team => {
+                    html += `
+                        <div class="mobile-team-card eliminated">
+                            <div class="mobile-team-info">
+                                <div class="mobile-team-seed">${team.team.match(/\((\d+)\)/)?.[1] || 'Seed'}</div>
+                                <div class="mobile-team-name">${team.team.replace(/\(\d+\)\s*/, '')}</div>
+                                <div class="mobile-team-status">${team.next_week}</div>
+                            </div>
+                            <div class="mobile-team-score">${team.score}</div>
+                        </div>
+                    `;
+                });
+            }
+            html += '</div>';
+            
+            container.innerHTML = html;
+        }
+
+        function populateMobileWeek16(week16Data) {
+            const container = document.getElementById('mobile-week16-content');
+            if (!container) return;
+            
+            const currentWeek = window.latestData?.payouts?.currentWeekInProgress || 0;
+            if (currentWeek < 16) {
+                container.innerHTML = '<div style="color: #79C4FF; text-align: center; padding: 20px;">Week 16 starts December 26, 2024</div>';
+                return;
+            }
+            
+            let html = '';
+            
+            // Conference Championship
+            html += '<div class="mobile-bracket-section">';
+            html += '<div class="mobile-bracket-title">🏆 Conference Championship</div>';
+            if (week16Data.conference && week16Data.conference.length > 0) {
+                week16Data.conference.forEach((team, idx) => {
+                    const isAdvancing = team.next_week === 'Superbowl';
+                    html += `
+                        <div class="mobile-team-card ${isAdvancing ? 'winner' : 'eliminated'}">
+                            <div class="mobile-team-info">
+                                <div class="mobile-team-seed">${team.team.match(/\((\d+)\)/)?.[1] || 'Seed'}</div>
+                                <div class="mobile-team-name">${team.team.replace(/\(\d+\)\s*/, '')}</div>
+                                <div class="mobile-team-status">${isAdvancing ? '✓' : '✗'} ${team.next_week}</div>
+                            </div>
+                            <div class="mobile-team-score">${team.score}</div>
+                        </div>
+                    `;
+                });
+            }
+            html += '</div>';
+            
+            // Purgatory
+            html += '<div class="mobile-track-divider"></div>';
+            html += '<div class="mobile-bracket-section">';
+            html += '<div class="mobile-bracket-title">💀 Purgatory</div>';
+            if (week16Data.purgatory && week16Data.purgatory.length > 0) {
+                week16Data.purgatory.slice(0, 5).forEach(team => {
+                    html += `
+                        <div class="mobile-team-card eliminated">
+                            <div class="mobile-team-info">
+                                <div class="mobile-team-seed">${team.team.match(/\((\d+)\)/)?.[1] || 'Seed'}</div>
+                                <div class="mobile-team-name">${team.team.replace(/\(\d+\)\s*/, '')}</div>
+                                <div class="mobile-team-status">Season Over</div>
+                            </div>
+                            <div class="mobile-team-score">${team.score}</div>
+                        </div>
+                    `;
+                });
+            }
+            html += '</div>';
+            
+            // Toilet Bowl
+            html += '<div class="mobile-track-divider"></div>';
+            html += '<div class="mobile-bracket-section">';
+            html += '<div class="mobile-bracket-title">🚽 Toilet Bowl</div>';
+            if (week16Data.toilet && week16Data.toilet.length > 0) {
+                week16Data.toilet.slice(0, 4).forEach(team => {
+                    html += `
+                        <div class="mobile-team-card eliminated">
+                            <div class="mobile-team-info">
+                                <div class="mobile-team-seed">${team.team.match(/\((\d+)\)/)?.[1] || 'Seed'}</div>
+                                <div class="mobile-team-name">${team.team.replace(/\(\d+\)\s*/, '')}</div>
+                                <div class="mobile-team-status">${team.next_week}</div>
+                            </div>
+                            <div class="mobile-team-score">${team.score}</div>
+                        </div>
+                    `;
+                });
+            }
+            html += '</div>';
+            
+            container.innerHTML = html;
+        }
+
+        function populateMobileWeek17(week17Data) {
+            const container = document.getElementById('mobile-week17-content');
+            if (!container) return;
+            
+            const currentWeek = window.latestData?.payouts?.currentWeekInProgress || 0;
+            if (currentWeek < 17) {
+                container.innerHTML = '<div style="color: #79C4FF; text-align: center; padding: 20px;">Week 17 starts January 2, 2025</div>';
+                return;
+            }
+            
+            let html = '';
+            
+            // Championship
+            html += '<div class="mobile-bracket-section">';
+            html += '<div class="mobile-bracket-title">👑 Championship Game</div>';
+            if (week17Data.championship && week17Data.championship.length > 0) {
+                week17Data.championship.forEach((team, idx) => {
+                    const isChampion = idx === 0 && team.final_result === 'Champion';
+                    html += `
+                        <div class="mobile-team-card ${isChampion ? 'winner' : ''}">
+                            <div class="mobile-team-info">
+                                <div class="mobile-team-seed">${team.team.match(/\((\d+)\)/)?.[1] || 'Seed'}</div>
+                                <div class="mobile-team-name">${team.team.replace(/\(\d+\)\s*/, '')}</div>
+                                <div class="mobile-team-status">${team.final_result}</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div class="mobile-team-score">${team.score}</div>
+                                ${team.payout && team.payout !== '$-' ? `<div class="mobile-payout-badge" style="font-size: 11px; margin-top: 4px;">${team.payout}</div>` : ''}
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            html += '</div>';
+            
+            // Purgatory
+            html += '<div class="mobile-track-divider"></div>';
+            html += '<div class="mobile-bracket-section">';
+            html += '<div class="mobile-bracket-title">💀 Purgatory</div>';
+            if (week17Data.purgatory && week17Data.purgatory.length > 0) {
+                week17Data.purgatory.slice(0, 6).forEach(team => {
+                    html += `
+                        <div class="mobile-team-card eliminated">
+                            <div class="mobile-team-info">
+                                <div class="mobile-team-seed">${team.team.match(/\((\d+)\)/)?.[1] || 'Seed'}</div>
+                                <div class="mobile-team-name">${team.team.replace(/\(\d+\)\s*/, '')}</div>
+                                <div class="mobile-team-status">Season Over</div>
+                            </div>
+                            <div class="mobile-team-score">${team.score}</div>
+                        </div>
+                    `;
+                });
+            }
+            html += '</div>';
+            
+            // The Final Flush
+            html += '<div class="mobile-track-divider"></div>';
+            html += '<div class="mobile-bracket-section">';
+            html += '<div class="mobile-bracket-title">🚽 The Final Flush</div>';
+            if (week17Data.toilet && week17Data.toilet.length > 0) {
+                week17Data.toilet.forEach(team => {
+                    html += `
+                        <div class="mobile-team-card eliminated">
+                            <div class="mobile-team-info">
+                                <div class="mobile-team-seed">${team.team.match(/\((\d+)\)/)?.[1] || 'Seed'}</div>
+                                <div class="mobile-team-name">${team.team.replace(/\(\d+\)\s*/, '')}</div>
+                                <div class="mobile-team-status">${team.final_result}</div>
+                            </div>
+                            <div class="mobile-team-score">${team.score}</div>
+                        </div>
+                    `;
+                });
+            }
+            html += '</div>';
+            
+            container.innerHTML = html;
+        }
+        
         </script>
     </div>
 </body>
