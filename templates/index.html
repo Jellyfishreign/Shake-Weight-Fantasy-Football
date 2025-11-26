@@ -6075,8 +6075,8 @@
             // Check if weeks are complete OR in progress based on payouts data
             // Use currentWeekInProgress to show real-time scores during games
             const currentWeek = window.latestData?.payouts?.currentWeekInProgress || 0;
-            const week14Complete = currentWeek >= 14;
-            const week15Complete = currentWeek >= 15;
+            const week14Complete = currentWeek >= 9;  // TESTING: normally 14
+            const week15Complete = currentWeek >= 10;  // TESTING: normally 15
             
             // Update Week 14 data - only if week 14 is complete
             if (week14Complete) {
@@ -6160,7 +6160,7 @@
         function updateWeek16(weekData) {
             // Use currentWeekInProgress to show real-time scores during games
             const currentWeek = window.latestData?.payouts?.currentWeekInProgress || 0;
-            const week16Complete = currentWeek >= 16;
+            const week16Complete = currentWeek >= 11;  // TESTING: normally 16
             
             if (week16Complete) {
                 updateTable('week16-conference', weekData.conference, ['team', 'proj_score', 'score', 'next_week']);
@@ -6176,7 +6176,7 @@
         function updateWeek17(weekData) {
             // Use currentWeekInProgress to show real-time scores during games
             const currentWeek = window.latestData?.payouts?.currentWeekInProgress || 0;
-            const week17Complete = currentWeek >= 17;
+            const week17Complete = currentWeek >= 12;  // TESTING: normally 17
             
             if (week17Complete) {
                 updateTable('week17-championship', weekData.championship, ['team', 'proj_score', 'score', 'final_result', 'payout']);
@@ -9194,10 +9194,10 @@
                 if (item) {
                     item.classList.remove('current-week', 'completed', 'upcoming');
                     
-                    if (week === currentWeek) {
+                    if (actualWeek === currentWeek) {
                         item.classList.add('current-week');
                         if (statusEl) statusEl.textContent = 'IN PROGRESS';
-                    } else if (week < currentWeek) {
+                    } else if (actualWeek < currentWeek) {
                         item.classList.add('completed');
                         if (statusEl) statusEl.textContent = 'COMPLETE';
                     } else {
@@ -9213,9 +9213,11 @@
             populateMobileWeek16(data.week16);
             populateMobileWeek17(data.week17);
             
-            // Auto-expand current week
-            if (currentWeek >= 14 && currentWeek <= 17) {
-                setTimeout(() => toggleMobileAccordion(currentWeek), 300);
+            // Auto-expand current week (map actual week to display week)
+            const reverseMap = {9: 14, 10: 15, 11: 16, 12: 17};  // TESTING: actual week -> display week
+            const displayWeek = reverseMap[currentWeek];
+            if (displayWeek) {
+                setTimeout(() => toggleMobileAccordion(displayWeek), 300);
             }
         }
 

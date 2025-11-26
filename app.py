@@ -88,8 +88,8 @@ def fetch_playoff_data():
         username = "LactatingLtinas"
         season = "2025"
         target_league_name = "The Shake Weight Fantasy League"
-        weeks_pre = list(range(1, 14))  # Weeks 1–13
-        w14, w15, w16, w17 = 14, 15, 16, 17  # Playoff rounds
+        weeks_pre = list(range(1, 9))  # Weeks 1–8 (TESTING: normally 1-13)
+        w14, w15, w16, w17 = 9, 10, 11, 12  # TESTING: Playoff rounds (normally 14, 15, 16, 17)
 
         # ——— FETCH USER & LEAGUE ———
         print(f"[INFO] Looking up user: {username}")
@@ -319,9 +319,9 @@ def fetch_playoff_data():
         # This allows real-time scores during games
         current_week_for_display = current_nfl_week if current_nfl_week <= 17 else 17
         
-        # Weekly high scores (only for completed weeks 1-13)
+        # Weekly high scores (only for completed weeks 1-8) - TESTING: normally 1-13
         weekly_winners = {}
-        for week in range(1, min(14, latest_completed_week + 1)):
+        for week in range(1, min(9, latest_completed_week + 1)):
             week_scores = [(r['team'], scores[r['roster_id']].get(week, 0)) for r in results]
             # Only add if there are actual scores
             if any(score > 0 for _, score in week_scores):
@@ -334,9 +334,9 @@ def fetch_playoff_data():
                     'date': ''  # Can be populated with actual dates if needed
                 }
         
-        # Season high score (only if week 13 is complete)
+        # Season high score (only if week 8 is complete) - TESTING: normally week 13
         season_high_score = None
-        if latest_completed_week >= 13:
+        if latest_completed_week >= 8:
             season_high_team = max(results, key=lambda r: r['pre_total'])
             season_high_score = {
                 'team': season_high_team['team'],
@@ -345,9 +345,9 @@ def fetch_playoff_data():
                 'date': ''
             }
         
-        # Duel of Fates (only if week 15 is complete)
+        # Duel of Fates (only if week 10 is complete) - TESTING: normally week 15
         duel_of_fates = {}
-        if latest_completed_week >= 15 and len(bye_list) >= 2:
+        if latest_completed_week >= 10 and len(bye_list) >= 2:
             bye_teams_sorted = sorted(bye_list, key=lambda r: r.get("combined", 0), reverse=True)
             
             # Calculate payout based on winning margin
@@ -382,9 +382,9 @@ def fetch_playoff_data():
                 'date': ''
             }
         
-        # Champion (only if week 17 is complete)
+        # Champion (only if week 12 is complete) - TESTING: normally week 17
         champion = None
-        if latest_completed_week >= 17 and conf_top3_sorted:
+        if latest_completed_week >= 12 and conf_top3_sorted:
             champion_team = conf_top3_sorted[0]
             champion = {
                 'team': champion_team['team'],
