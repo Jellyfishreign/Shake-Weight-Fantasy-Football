@@ -1284,10 +1284,22 @@
 
         .mobile-accordion-item.current-week .mobile-accordion-header {
             background: linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(255, 165, 0, 0.2) 100%);
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .mobile-accordion-item.upcoming .mobile-accordion-header {
+            cursor: not-allowed;
+            opacity: 0.5;
         }
 
         .mobile-accordion-item.completed .mobile-accordion-header {
             background: rgba(38, 166, 154, 0.2);
+            cursor: pointer;
+        }
+
+        .mobile-accordion-item.completed .mobile-accordion-header:hover {
+            background: rgba(38, 166, 154, 0.3);
         }
 
         .week-info {
@@ -9176,14 +9188,22 @@
         // Mobile Quantum Gauntlet Functions
         function toggleMobileAccordion(week) {
             console.log('=== Toggling accordion for week:', week);
+            const item = document.querySelector(`.mobile-accordion-item[data-week="${week}"]`);
+            
+            // Only allow expansion for completed weeks
+            if (item && !item.classList.contains('completed')) {
+                console.log(`Week ${week} is not completed yet - expansion disabled`);
+                return;
+            }
+            
             const body = document.getElementById(`accordion-week${week}`);
             const icon = document.getElementById(`icon-week${week}`);
-            const item = document.querySelector(`.mobile-accordion-item[data-week="${week}"]`);
             
             console.log('Elements found:', {
                 body: body ? 'YES' : 'NO', 
                 icon: icon ? 'YES' : 'NO', 
-                item: item ? 'YES' : 'NO'
+                item: item ? 'YES' : 'NO',
+                isCompleted: item ? item.classList.contains('completed') : false
             });
             
             if (!body) {
@@ -9264,13 +9284,13 @@
                     
                     if (actualWeek === currentWeek) {
                         item.classList.add('current-week');
-                        if (statusEl) statusEl.textContent = 'IN PROGRESS';
+                        if (statusEl) statusEl.textContent = '🔒 IN PROGRESS';
                     } else if (actualWeek < currentWeek) {
                         item.classList.add('completed');
-                        if (statusEl) statusEl.textContent = 'COMPLETE';
+                        if (statusEl) statusEl.textContent = '✓ COMPLETE';
                     } else {
                         item.classList.add('upcoming');
-                        if (statusEl) statusEl.textContent = 'UPCOMING';
+                        if (statusEl) statusEl.textContent = '🔒 LOCKED';
                     }
                 }
             }
@@ -9283,12 +9303,7 @@
             populateMobileWeek17(data.week17);
             console.log('Mobile week content populated');
             
-            // Auto-expand current week (map actual week to display week)
-            const reverseMap = {9: 14, 10: 15, 11: 16, 12: 17};  // TESTING: actual week -> display week
-            const displayWeek = reverseMap[currentWeek];
-            if (displayWeek) {
-                setTimeout(() => toggleMobileAccordion(displayWeek), 300);
-            }
+            // Do not auto-expand any week - user will manually expand completed weeks
         }
 
         function populateMobileWeek14(week14Data, week15Data) {
