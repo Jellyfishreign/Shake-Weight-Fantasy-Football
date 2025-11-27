@@ -9238,10 +9238,14 @@
             const currentWeek = data?.payouts?.currentWeekInProgress || 0;
             console.log('Current week for mobile view:', currentWeek);
             
-            // Update week status indicators
+            // Update week status indicators (map testing weeks 9-12 to display as 14-17)
+            const weekMap = {14: 9, 15: 10, 16: 11, 17: 12};  // TESTING: display week -> actual week
             for (let week = 14; week <= 17; week++) {
+                const actualWeek = weekMap[week];
                 const statusEl = document.getElementById(`status-week${week}`);
                 const item = document.querySelector(`.mobile-accordion-item[data-week="${week}"]`);
+                
+                console.log(`Week ${week} (actual ${actualWeek}): currentWeek=${currentWeek}`);
                 
                 if (item) {
                     item.classList.remove('current-week', 'completed', 'upcoming');
