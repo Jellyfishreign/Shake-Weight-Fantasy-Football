@@ -64,6 +64,18 @@ def after_request(response):
         response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
         response.headers["Access-Control-Allow-Headers"] = "Content-Type"
     
+    # Add Content Security Policy to allow Socket.IO and Chart.js
+    csp = (
+        "default-src 'self'; "
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdn.socket.io; "
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+        "font-src 'self' https://fonts.gstatic.com; "
+        "connect-src 'self' wss://shake-weight-fantasy.onrender.com ws://localhost:5004 http://localhost:5004 https://shake-weight-fantasy.onrender.com; "
+        "img-src 'self' data: https:; "
+        "frame-ancestors 'none';"
+    )
+    response.headers["Content-Security-Policy"] = csp
+    
     return response
 
 # Global variables to store the latest data
