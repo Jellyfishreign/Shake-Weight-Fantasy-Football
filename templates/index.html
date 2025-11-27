@@ -6207,6 +6207,10 @@
 
         function updateStandings(standings, initialStandings) {
             const grid = document.getElementById('standings-grid');
+            if (!grid) {
+                // Standings grid element doesn't exist - skip update
+                return;
+            }
             grid.innerHTML = '';
             
             standings.forEach(team => {
@@ -6248,6 +6252,7 @@
             if (!table) return;
             
             const tbody = table.querySelector('tbody');
+            if (!tbody) return;
             tbody.innerHTML = '';
             
             if (data.length === 0) {
@@ -6485,6 +6490,7 @@
 
         function populateIdpTable(data) {
             const tbody = document.getElementById('idp-rankings-tbody');
+            if (!tbody) return;
             tbody.innerHTML = '';
             
             data.forEach(player => {
