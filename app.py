@@ -64,14 +64,15 @@ def after_request(response):
         response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
         response.headers["Access-Control-Allow-Headers"] = "Content-Type"
     
-    # Add Content Security Policy to allow Socket.IO and Chart.js
+    # Add Content Security Policy to allow Socket.IO, Chart.js, and YouTube embeds
     csp = (
         "default-src 'self'; "
-        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdn.socket.io; "
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdn.socket.io https://cdnjs.cloudflare.com; "
         "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
         "font-src 'self' https://fonts.gstatic.com; "
-        "connect-src 'self' wss://shake-weight-fantasy.onrender.com ws://localhost:5004 http://localhost:5004 https://shake-weight-fantasy.onrender.com; "
+        "connect-src 'self' wss://shake-weight-fantasy.onrender.com ws://localhost:5004 http://localhost:5004 https://shake-weight-fantasy.onrender.com https://cdn.jsdelivr.net; "
         "img-src 'self' data: https:; "
+        "frame-src 'self' https://www.youtube.com; "
         "frame-ancestors 'none';"
     )
     response.headers["Content-Security-Policy"] = csp
