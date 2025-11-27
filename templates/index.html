@@ -4640,7 +4640,7 @@
     <div class="container">
         <div class="header">
             <h1>Shake Weight Fantasy Football</h1>
-            <p style="font-weight:700; letter-spacing:0.5px;">Draft: September 3rd, 2025 8:00 PM CST</p>
+            <p style="font-weight:700; letter-spacing:0.5px;">The Quantum Gauntlet: December 4th, 2025</p>
             <!-- <div class="timestamp" id="timestamp">Loading...</div> -->
             <div class="view-toggle">
                 <button id="desktop-mode" class="toggle-btn active">Desktop</button>
@@ -9366,8 +9366,17 @@
             
             let html = '';
             
-            // Duel of the Fates
-            html += '<div class="mobile-bracket-section">';
+            // Duel of the Fates (with video background)
+            html += '<div class="mobile-bracket-section" style="position: relative; overflow: hidden;">';
+            html += `
+                <iframe 
+                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; opacity: 0.25;"
+                    src="https://www.youtube.com/embed/8_3ufz0rgi0?autoplay=1&mute=1&loop=1&playlist=8_3ufz0rgi0&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&enablejsapi=1"
+                    frameborder="0"
+                    allow="autoplay">
+                </iframe>
+            `;
+            html += '<div style="position: relative; z-index: 1;">';
             html += '<div class="mobile-bracket-title">⚔️ Duel of the Fates</div>';
             if (week14Data.bye && week14Data.bye.length >= 2) {
                 week14Data.bye.slice(0, 2).forEach((team, idx) => {
@@ -9384,7 +9393,7 @@
                     if (idx === 0) html += '<div class="mobile-vs-divider">VS</div>';
                 });
             }
-            html += '</div>';
+            html += '</div></div>';
             
             // Wildcard + Divisional
             html += '<div class="mobile-track-divider"></div>';
@@ -9449,27 +9458,61 @@
             
             let html = '';
             
-            // Duel of the Fates Results
-            html += '<div class="mobile-bracket-section">';
-            html += '<div class="mobile-bracket-title">⚔️ Duel Results</div>';
-            if (week15Data.bye_result && week15Data.bye_result.length >= 2) {
-                week15Data.bye_result.forEach((team, idx) => {
+            // Duel of the Fates Results (aggregate of weeks 14 + 15, with video background)
+            html += '<div class="mobile-bracket-section" style="position: relative; overflow: hidden;">';
+            html += `
+                <iframe 
+                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; opacity: 0.25;"
+                    src="https://www.youtube.com/embed/8_3ufz0rgi0?autoplay=1&mute=1&loop=1&playlist=8_3ufz0rgi0&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&enablejsapi=1"
+                    frameborder="0"
+                    allow="autoplay">
+                </iframe>
+            `;
+            html += '<div style="position: relative; z-index: 1;">';
+            html += '<div class="mobile-bracket-title">⚔️ Duel of the Fates Results</div>';
+            
+            // Calculate aggregate scores (same logic as desktop)
+            const week14bye = (window.latestData?.week14?.bye || []).slice(0, 2);
+            const week15bye = (week15Data.bye || []).slice(0, 2);
+            
+            // Build map of team -> scores for both weeks
+            const byTeam14 = new Map(week14bye.map(r => [String(r.team), Number(r.score || 0)]));
+            const byTeam15 = new Map(week15bye.map(r => [String(r.team), Number(r.score || 0)]));
+            
+            // Combine and calculate aggregate
+            const teams = Array.from(new Set([...byTeam14.keys(), ...byTeam15.keys()]));
+            const aggregateScores = teams.map(name => ({
+                team: name,
+                week14Score: byTeam14.get(name) || 0,
+                week15Score: byTeam15.get(name) || 0,
+                total: (byTeam14.get(name) || 0) + (byTeam15.get(name) || 0)
+            }));
+            
+            // Sort by total (winner first)
+            aggregateScores.sort((a, b) => b.total - a.total);
+            
+            // Display aggregate results
+            if (aggregateScores.length >= 2) {
+                aggregateScores.forEach((teamData, idx) => {
+                    const isWinner = idx === 0;
                     html += `
-                        <div class="mobile-team-card winner">
+                        <div class="mobile-team-card ${isWinner ? 'winner' : 'eliminated'}">
                             <div class="mobile-team-info">
-                                <div class="mobile-team-seed">${team.team.match(/\((\d+)\)/)?.[1] || 'Seed'}</div>
-                                <div class="mobile-team-name">${team.team.replace(/\(\d+\)\s*/, '')}</div>
-                                <div class="mobile-team-status">→ ${team.next_week}</div>
+                                <div class="mobile-team-seed">${teamData.team.match(/\((\d+)\)/)?.[1] || 'Seed'}</div>
+                                <div class="mobile-team-name">${teamData.team.replace(/\(\d+\)\s*/, '')}</div>
+                                <div class="mobile-team-status" style="font-size: 10px;">
+                                    Wk14: ${teamData.week14Score.toFixed(2)} + Wk15: ${teamData.week15Score.toFixed(2)}
+                                </div>
                             </div>
                             <div style="text-align: right;">
-                                <div class="mobile-team-score">${team.score}</div>
-                                <div class="mobile-payout-badge" style="font-size: 11px; margin-top: 4px;">${team.payout}</div>
+                                <div class="mobile-team-score">${teamData.total.toFixed(2)}</div>
+                                ${isWinner ? '<div class="mobile-payout-badge" style="font-size: 11px; margin-top: 4px;">Winner</div>' : ''}
                             </div>
                         </div>
                     `;
                 });
             }
-            html += '</div>';
+            html += '</div></div>';
             
             // Playoff Results
             html += '<div class="mobile-track-divider"></div>';
