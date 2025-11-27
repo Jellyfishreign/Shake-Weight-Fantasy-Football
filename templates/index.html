@@ -9308,10 +9308,10 @@
             
             // Populate each week's content
             console.log('Populating mobile week content...');
-            populateMobileWeek14(data.week14, data.week15);
-            populateMobileWeek15(data.week15);
-            populateMobileWeek16(data.week16);
-            populateMobileWeek17(data.week17);
+            populateMobileWeek14(data.week14, data.week15, weekMap[14], currentWeek);
+            populateMobileWeek15(data.week15, weekMap[15], currentWeek);
+            populateMobileWeek16(data.week16, weekMap[16], currentWeek);
+            populateMobileWeek17(data.week17, weekMap[17], currentWeek);
             console.log('Mobile week content populated');
             
             // Auto-expand current in-progress week (map actual week to display week)
@@ -9322,16 +9322,15 @@
             }
         }
 
-        function populateMobileWeek14(week14Data, week15Data) {
-            console.log('populateMobileWeek14 called', {week14Data, week15Data});
+        function populateMobileWeek14(week14Data, week15Data, actualWeek, currentWeek) {
+            console.log('populateMobileWeek14 called', {week14Data, week15Data, actualWeek, currentWeek});
             const container = document.getElementById('mobile-week14-content');
             if (!container) {
                 console.error('mobile-week14-content container not found!');
                 return;
             }
             
-            const currentWeek = window.latestData?.payouts?.currentWeekInProgress || 0;
-            if (currentWeek < 14) {
+            if (currentWeek < actualWeek) {
                 container.innerHTML = '<div style="color: #79C4FF; text-align: center; padding: 20px;">Week 14 starts December 12, 2024</div>';
                 return;
             }
@@ -9409,12 +9408,12 @@
             container.innerHTML = html;
         }
 
-        function populateMobileWeek15(week15Data) {
+        function populateMobileWeek15(week15Data, actualWeek, currentWeek) {
+            console.log('populateMobileWeek15 called', {week15Data, actualWeek, currentWeek});
             const container = document.getElementById('mobile-week15-content');
             if (!container) return;
             
-            const currentWeek = window.latestData?.payouts?.currentWeekInProgress || 0;
-            if (currentWeek < 15) {
+            if (currentWeek < actualWeek) {
                 container.innerHTML = '<div style="color: #79C4FF; text-align: center; padding: 20px;">Week 15 starts December 19, 2024</div>';
                 return;
             }
@@ -9487,12 +9486,12 @@
             container.innerHTML = html;
         }
 
-        function populateMobileWeek16(week16Data) {
+        function populateMobileWeek16(week16Data, actualWeek, currentWeek) {
+            console.log('populateMobileWeek16 called', {week16Data, actualWeek, currentWeek});
             const container = document.getElementById('mobile-week16-content');
             if (!container) return;
             
-            const currentWeek = window.latestData?.payouts?.currentWeekInProgress || 0;
-            if (currentWeek < 16) {
+            if (currentWeek < actualWeek) {
                 container.innerHTML = '<div style="color: #79C4FF; text-align: center; padding: 20px;">Week 16 starts December 26, 2024</div>';
                 return;
             }
@@ -9562,12 +9561,12 @@
             container.innerHTML = html;
         }
 
-        function populateMobileWeek17(week17Data) {
+        function populateMobileWeek17(week17Data, actualWeek, currentWeek) {
+            console.log('populateMobileWeek17 called', {week17Data, actualWeek, currentWeek});
             const container = document.getElementById('mobile-week17-content');
             if (!container) return;
             
-            const currentWeek = window.latestData?.payouts?.currentWeekInProgress || 0;
-            if (currentWeek < 17) {
+            if (currentWeek < actualWeek) {
                 container.innerHTML = '<div style="color: #79C4FF; text-align: center; padding: 20px;">Week 17 starts January 2, 2025</div>';
                 return;
             }
