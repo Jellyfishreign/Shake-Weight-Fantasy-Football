@@ -9175,15 +9175,27 @@
 
         // Mobile Quantum Gauntlet Functions
         function toggleMobileAccordion(week) {
-            console.log('Toggling accordion for week:', week);
+            console.log('=== Toggling accordion for week:', week);
             const body = document.getElementById(`accordion-week${week}`);
             const icon = document.getElementById(`icon-week${week}`);
             const item = document.querySelector(`.mobile-accordion-item[data-week="${week}"]`);
             
-            console.log('Elements found:', {body: !!body, icon: !!icon, item: !!item});
+            console.log('Elements found:', {
+                body: body ? 'YES' : 'NO', 
+                icon: icon ? 'YES' : 'NO', 
+                item: item ? 'YES' : 'NO'
+            });
             
-            if (!body || !icon || !item) {
-                console.error('Missing accordion elements for week', week);
+            if (!body) {
+                console.error(`accordion-week${week} not found!`);
+                return;
+            }
+            if (!icon) {
+                console.error(`icon-week${week} not found!`);
+                return;
+            }
+            if (!item) {
+                console.error(`.mobile-accordion-item[data-week="${week}"] not found!`);
                 return;
             }
             
@@ -9264,10 +9276,12 @@
             }
             
             // Populate each week's content
+            console.log('Populating mobile week content...');
             populateMobileWeek14(data.week14, data.week15);
             populateMobileWeek15(data.week15);
             populateMobileWeek16(data.week16);
             populateMobileWeek17(data.week17);
+            console.log('Mobile week content populated');
             
             // Auto-expand current week (map actual week to display week)
             const reverseMap = {9: 14, 10: 15, 11: 16, 12: 17};  // TESTING: actual week -> display week
@@ -9278,8 +9292,12 @@
         }
 
         function populateMobileWeek14(week14Data, week15Data) {
+            console.log('populateMobileWeek14 called', {week14Data, week15Data});
             const container = document.getElementById('mobile-week14-content');
-            if (!container) return;
+            if (!container) {
+                console.error('mobile-week14-content container not found!');
+                return;
+            }
             
             const currentWeek = window.latestData?.payouts?.currentWeekInProgress || 0;
             if (currentWeek < 14) {
