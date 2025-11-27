@@ -5201,7 +5201,7 @@
                 </div>
 
                 <!-- ADD this interactive tournament visualization -->
-                <div class="quantum-gauntlet-visualization" id="quantum-gauntlet-viz">
+                <div class="quantum-gauntlet-visualization" id="quantum-gauntlet-viz" style="display: none;">
                     <div class="tournament-header">
                         <h2 class="tournament-title">⚡ The Quantum Gauntlet Tournament</h2>
                         <p class="tournament-subtitle">Interactive playoff bracket - Click elements to explore</p>
@@ -6091,8 +6091,8 @@
             // Check if weeks are complete OR in progress based on payouts data
             // Use currentWeekInProgress to show real-time scores during games
             const currentWeek = window.latestData?.payouts?.currentWeekInProgress || 0;
-            const week14Complete = currentWeek >= 9;  // TESTING: normally 14
-            const week15Complete = currentWeek >= 10;  // TESTING: normally 15
+            const week14Complete = currentWeek >= 14;
+            const week15Complete = currentWeek >= 15;
             
             // Update Week 14 data - only if week 14 is complete
             if (week14Complete) {
@@ -9310,8 +9310,8 @@
             const currentWeek = data?.payouts?.currentWeekInProgress || 0;
             console.log('Current week for mobile view:', currentWeek);
             
-            // Update week status indicators (map testing weeks 9-12 to display as 14-17)
-            const weekMap = {14: 9, 15: 10, 16: 11, 17: 12};  // TESTING: display week -> actual week
+            // Update week status indicators
+            const weekMap = {14: 14, 15: 15, 16: 16, 17: 17};  // Production: display week -> actual week
             for (let week = 14; week <= 17; week++) {
                 const actualWeek = weekMap[week];
                 const statusEl = document.getElementById(`status-week${week}`);
@@ -9343,8 +9343,8 @@
             populateMobileWeek17(data.week17, weekMap[17], currentWeek);
             console.log('Mobile week content populated');
             
-            // Auto-expand current in-progress week (map actual week to display week)
-            const reverseMap = {9: 14, 10: 15, 11: 16, 12: 17};  // TESTING: actual week -> display week
+            // Auto-expand current in-progress week
+            const reverseMap = {14: 14, 15: 15, 16: 16, 17: 17};  // Production: actual week -> display week
             const displayWeek = reverseMap[currentWeek];
             if (displayWeek) {
                 setTimeout(() => toggleMobileAccordion(displayWeek), 300);
