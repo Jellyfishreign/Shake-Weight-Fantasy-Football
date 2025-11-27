@@ -43,6 +43,7 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your-secret-key-here')
 # Allow CORS for GitHub Pages and local development
 allowed_origins = [
     "https://jellyfishreign.github.io",
+    "https://shake-weight-fantasy.onrender.com",
     "http://localhost:5004",
     "http://127.0.0.1:5004"
 ]
@@ -55,9 +56,9 @@ def after_request(response):
     response.headers["Pragma"] = "no-cache"
     response.headers["Expires"] = "0"
     
-    # Add CORS headers for GitHub Pages
+    # Add CORS headers for allowed origins
     origin = request.headers.get('Origin')
-    if origin in ['https://jellyfishreign.github.io', 'http://localhost:5004', 'http://127.0.0.1:5004']:
+    if origin in ['https://jellyfishreign.github.io', 'https://shake-weight-fantasy.onrender.com', 'http://localhost:5004', 'http://127.0.0.1:5004']:
         response.headers["Access-Control-Allow-Origin"] = origin
         response.headers["Access-Control-Allow-Credentials"] = "true"
         response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
