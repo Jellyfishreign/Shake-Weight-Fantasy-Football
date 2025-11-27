@@ -70,7 +70,7 @@ def after_request(response):
         "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdn.socket.io https://cdnjs.cloudflare.com; "
         "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
         "font-src 'self' https://fonts.gstatic.com; "
-        "connect-src 'self' wss://shake-weight-fantasy.onrender.com ws://localhost:5004 http://localhost:5004 https://shake-weight-fantasy.onrender.com https://cdn.jsdelivr.net; "
+        "connect-src 'self' wss://shake-weight-fantasy.onrender.com ws://localhost:5004 http://localhost:5004 https://shake-weight-fantasy.onrender.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; "
         "img-src 'self' data: https:; "
         "frame-src 'self' https://www.youtube.com; "
         "frame-ancestors 'none';"
