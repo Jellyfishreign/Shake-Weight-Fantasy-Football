@@ -5834,7 +5834,7 @@
                         
                         <!-- Week 14 Accordion -->
                         <div class="mobile-accordion-item" data-week="14">
-                            <div class="mobile-accordion-header" onclick="toggleMobileAccordion(14)">
+                            <div class="mobile-accordion-header" data-week="14">
                                 <div class="week-info">
                                     <span class="week-number">WEEK 14</span>
                                     <span class="week-subtitle">Wildcard Round</span>
@@ -5850,7 +5850,7 @@
                         
                         <!-- Week 15 Accordion -->
                         <div class="mobile-accordion-item" data-week="15">
-                            <div class="mobile-accordion-header" onclick="toggleMobileAccordion(15)">
+                            <div class="mobile-accordion-header" data-week="15">
                                 <div class="week-info">
                                     <span class="week-number">WEEK 15</span>
                                     <span class="week-subtitle">Divisional Round</span>
@@ -5866,7 +5866,7 @@
                         
                         <!-- Week 16 Accordion -->
                         <div class="mobile-accordion-item" data-week="16">
-                            <div class="mobile-accordion-header" onclick="toggleMobileAccordion(16)">
+                            <div class="mobile-accordion-header" data-week="16">
                                 <div class="week-info">
                                     <span class="week-number">WEEK 16</span>
                                     <span class="week-subtitle">Conference Championship</span>
@@ -5882,7 +5882,7 @@
                         
                         <!-- Week 17 Accordion -->
                         <div class="mobile-accordion-item" data-week="17">
-                            <div class="mobile-accordion-header" onclick="toggleMobileAccordion(17)">
+                            <div class="mobile-accordion-header" data-week="17">
                                 <div class="week-info">
                                     <span class="week-number">WEEK 17</span>
                                     <span class="week-subtitle">Championship Game</span>
@@ -6306,6 +6306,9 @@
 
         // Main tab switching logic
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize mobile accordion listeners
+            initializeMobileAccordionListeners();
+            
             const tabButtons = document.querySelectorAll('.tab-button');
             const tabContents = document.querySelectorAll('.tab-content');
             tabButtons.forEach(btn => {
@@ -6321,6 +6324,9 @@
                         initializePayouts();
                     } else if (tabId === 'quantum-gauntlet-mobile') {
                         setTimeout(() => {
+                            // Reinitialize listeners when switching to mobile tab
+                            initializeMobileAccordionListeners();
+                            
                             if (window.latestData) {
                                 updateMobileQuantumGauntlet(window.latestData);
                             } else {
@@ -9269,6 +9275,29 @@
         
         // Make sure the function is globally available
         window.toggleMobileAccordion = toggleMobileAccordion;
+
+        // Attach click event listeners to mobile accordion headers
+        function initializeMobileAccordionListeners() {
+            console.log('Initializing mobile accordion click listeners...');
+            
+            document.querySelectorAll('.mobile-accordion-header[data-week]').forEach(header => {
+                const week = parseInt(header.getAttribute('data-week'));
+                
+                // Remove any existing listeners first
+                const newHeader = header.cloneNode(true);
+                header.parentNode.replaceChild(newHeader, header);
+                
+                newHeader.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log(`Click detected on week ${week} header`);
+                    toggleMobileAccordion(week);
+                });
+                
+                console.log(`Listener attached to week ${week}`);
+            });
+            
+            console.log('Mobile accordion listeners initialized');
+        }
 
         function updateMobileQuantumGauntlet(data) {
             console.log('Updating mobile Quantum Gauntlet', data);
