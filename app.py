@@ -301,7 +301,6 @@ def fetch_playoff_data():
         now = datetime.now(central_tz)
         
         # NFL 2025 season start date (Week 1 Thursday, Sep 4, 2025)
-        # Adjust this to match actual 2025 NFL season start
         season_start = central_tz.localize(datetime(2025, 9, 4))
         
         # Calculate which week we're in and which weeks are complete
@@ -329,9 +328,9 @@ def fetch_playoff_data():
         print(f"[INFO] Current NFL week in progress: {current_nfl_week}")
         print(f"[INFO] Latest completed week: {latest_completed_week}")
         
-        # For tournament display, we want to show the current week even if not complete
-        # This allows real-time scores during games
-        current_week_for_display = current_nfl_week if current_nfl_week <= 17 else 17
+        # For tournament display, show the week after the latest completed week
+        # This ensures we show data for the upcoming/current week once previous week finishes
+        current_week_for_display = min(latest_completed_week + 1, 17)
         
         # Weekly high scores (only for completed weeks 1-13)
         weekly_winners = {}
