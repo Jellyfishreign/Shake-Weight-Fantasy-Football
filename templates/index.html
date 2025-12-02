@@ -9368,19 +9368,19 @@
             
             // Duel of the Fates (with video background positioned below subtitle)
             html += '<div class="mobile-bracket-section" style="position: relative; overflow: hidden;">';
-            html += '<div style="position: relative; z-index: 2; background: rgba(30, 41, 59, 0.95); padding: 12px 0 0 0;">';
+            html += '<div style="position: relative; z-index: 0; background: rgba(30, 41, 59, 0.95); padding: 12px 0 0 0;">';
             html += '<div class="mobile-bracket-title">⚔️ Duel of the Fates</div>';
             html += '<div style="font-size: 11px; color: #79C4FF; text-align: center; margin-top: 4px; padding-bottom: 12px; font-weight: 600;">Two Week Tournament - $100 Pot</div>';
             html += '</div>';  // Close the title/subtitle wrapper with background
             html += `
                 <iframe 
-                    style="position: absolute; top: 55px; left: 50%; width: 150%; height: calc(100% - 55px); transform: translateX(-50%) scale(1.2); z-index: 0; pointer-events: none; opacity: 0.25;"
+                    style="position: absolute; top: 55px; left: 50%; width: 150%; height: calc(100% - 55px); transform: translateX(-50%) scale(1.2); z-index: 1; pointer-events: none; opacity: 0.25;"
                     src="https://www.youtube.com/embed/8_3ufz0rgi0?autoplay=1&mute=1&loop=1&playlist=8_3ufz0rgi0&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&enablejsapi=1"
                     frameborder="0"
                     allow="autoplay">
                 </iframe>
             `;
-            html += '<div style="position: relative; z-index: 1;">';  // Reopen wrapper for team cards
+            html += '<div style="position: relative; z-index: 2;">';  // Reopen wrapper for team cards
             if (week14Data.bye && week14Data.bye.length >= 2) {
                 week14Data.bye.slice(0, 2).forEach((team, idx) => {
                     html += `
