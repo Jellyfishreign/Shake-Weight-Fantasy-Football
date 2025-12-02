@@ -9385,7 +9385,7 @@
                             <div class="mobile-team-info">
                                 <div class="mobile-team-seed">${team.team.match(/\((\d+)\)/)?.[1] || 'Seed'}</div>
                                 <div class="mobile-team-name">${team.team.replace(/\(\d+\)\s*/, '')}</div>
-                                <div class="mobile-team-status">Bye Week - Auto Advance</div>
+                                <div class="mobile-team-status">Two Week Tournament - $100 Pot (auto advance)</div>
                             </div>
                             <div class="mobile-team-score">${team.score}</div>
                         </div>
@@ -9402,7 +9402,7 @@
             
             // Seeds 3-6
             if (week14Data.playoff && week14Data.playoff.length > 0) {
-                html += '<div style="font-size: 11px; color: #79C4FF; margin-bottom: 8px; text-align: center;">Seeds 3-6: Divisional Round</div>';
+                html += '<div style="font-size: 11px; color: #79C4FF; margin-bottom: 8px; text-align: center;">Seeds 3-6: Two Week Aggregate Score Match</div>';
                 week14Data.playoff.slice(0, 4).forEach(team => {
                     html += `
                         <div class="mobile-team-card">
@@ -9418,7 +9418,7 @@
             
             // Seeds 7-12 Wildcard
             if (week14Data.wildcard && week14Data.wildcard.length > 0) {
-                html += '<div style="font-size: 11px; color: #79C4FF; margin: 12px 0 8px; text-align: center;">Seeds 7-12: Winner Advances</div>';
+                html += '<div style="font-size: 11px; color: #79C4FF; margin: 12px 0 8px; text-align: center;">Seeds 7-12: Top Score of Week 14 advances</div>';
                 const sortedWildcard = [...week14Data.wildcard].sort((a, b) => parseFloat(b.score) - parseFloat(a.score));
                 sortedWildcard.forEach((team, idx) => {
                     const isWinner = idx === 0;
@@ -9436,12 +9436,12 @@
             }
             html += '</div>';
             
-            // Toilet Bowl
-            html += '<div class="mobile-track-divider"></div>';
-            html += '<div class="mobile-bracket-section">';
-            html += '<div class="mobile-bracket-title">🚽 Toilet Bowl</div>';
-            html += '<div style="font-size: 11px; color: #79C4FF; text-align: center; font-style: italic; padding: 8px;">Consolation Bracket</div>';
-            html += '</div>';
+            // Toilet Bowl - Hidden per user request
+            // html += '<div class="mobile-track-divider"></div>';
+            // html += '<div class="mobile-bracket-section">';
+            // html += '<div class="mobile-bracket-title">🚽 Toilet Bowl</div>';
+            // html += '<div style="font-size: 11px; color: #79C4FF; text-align: center; font-style: italic; padding: 8px;">Consolation Bracket</div>';
+            // html += '</div>';
             
             container.innerHTML = html;
         }
