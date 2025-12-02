@@ -235,13 +235,15 @@ def fetch_playoff_data():
         wildcard_list = sorted([r for r in results if r["position"] in ("Wildcard Winner","Toliet Bowl")],
                               key=lambda r:r["wk14"], reverse=True)
 
-        # Week 14: top/low bye, top4 playoff, all wildcard
-        top_bye = max(bye_list, key=lambda r:r["wk14"])
-        low_bye = min(bye_list, key=lambda r:r["wk14"])
+        # Week 14: top/low bye based on seeds (not Week 14 scores)
+        # Duel of the Fates should be Seed #1 vs Seed #2
+        bye_list_sorted = sorted(bye_list, key=lambda r:r["orig_seed"])
+        top_bye = bye_list_sorted[0] if len(bye_list_sorted) > 0 else None
+        low_bye = bye_list_sorted[1] if len(bye_list_sorted) > 1 else top_bye
 
-        # Week15 lists
-        top_bye15 = max(bye_list, key=lambda r:r["wk15"])
-        low_bye15 = min(bye_list, key=lambda r:r["wk15"])
+        # Week15 lists - also use seeds, not week 15 scores
+        top_bye15 = bye_list_sorted[0] if len(bye_list_sorted) > 0 else None
+        low_bye15 = bye_list_sorted[1] if len(bye_list_sorted) > 1 else top_bye15
         playoff15 = [r for r in results if 3<=r["orig_seed"]<=6]
         if wildcard_winner: playoff15.append(wildcard_winner)
         playoff15_sorted = sorted(playoff15, key=lambda r:r["wk15"], reverse=True)[:5]
