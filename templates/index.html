@@ -9378,6 +9378,7 @@
             `;
             html += '<div style="position: relative; z-index: 1;">';
             html += '<div class="mobile-bracket-title">⚔️ Duel of the Fates</div>';
+            html += '<div style="font-size: 11px; color: #FFD700; text-align: center; margin-top: 4px; margin-bottom: 12px; font-weight: 600;">Two Week Tournament - $100 Pot</div>';
             if (week14Data.bye && week14Data.bye.length >= 2) {
                 week14Data.bye.slice(0, 2).forEach((team, idx) => {
                     html += `
@@ -9385,7 +9386,7 @@
                             <div class="mobile-team-info">
                                 <div class="mobile-team-seed">${team.team.match(/\((\d+)\)/)?.[1] || 'Seed'}</div>
                                 <div class="mobile-team-name">${team.team.replace(/\(\d+\)\s*/, '')}</div>
-                                <div class="mobile-team-status">Two Week Tournament - $100 Pot (auto advance)</div>
+                                <div class="mobile-team-status">Auto Advance</div>
                             </div>
                             <div class="mobile-team-score">${team.score}</div>
                         </div>
