@@ -250,20 +250,22 @@ def fetch_playoff_data():
         wild15_sorted = sorted([r for r in wildcard_list if r is not wildcard_winner],
                               key=lambda r:r["wk15"], reverse=True)[:5]
 
-        # Combined Week14+15
+        # Combined Week14+15 (only for bye teams and wildcard losers)
         for r in bye_list: r["combined"]=r["wk14"]+r["wk15"]
-        for r in playoff15: r["combined"]=r["wk14"]+r["wk15"]
         for r in wildcard_list: r["combined"]=r["wk14"]+r["wk15"]
         top_bye_comb = max(bye_list, key=lambda r:r["combined"])
         low_bye_comb = min(bye_list, key=lambda r:r["combined"])
-        playoff_comb = sorted(playoff15, key=lambda r:r["combined"], reverse=True)[:5]
+        
+        # Divisional Round (Seeds 3-6 + wildcard winner): Week 15 ONLY (no aggregate)
+        playoff_comb = sorted(playoff15, key=lambda r:r["wk15"], reverse=True)[:5]
         wild_comb_sorted = sorted([r for r in wildcard_list if r is not wildcard_winner],
                                   key=lambda r:r["combined"], reverse=True)[:5]
 
-        # Week16 lists
+        # Week16 lists - top 3 from Week 15 playoff advance
         conf_list = bye_list + sorted(playoff_comb, key=lambda r:r["wk16"], reverse=True)[:3]
         conf_sorted = sorted(conf_list, key=lambda r:r["wk16"], reverse=True)
-        purg_list = sorted(playoff_comb, key=lambda r:r["wk16"])[:2] + \
+        # Purgatory: bottom 2 from playoff + second-best wildcard by wk16
+        purg_list = sorted(playoff_comb, key=lambda r:r["wk15"])[:2] + \
                     [sorted(wildcard_list, key=lambda r:r["wk16"], reverse=True)[1]]
         purg_sorted = sorted(purg_list, key=lambda r:r["wk16"], reverse=True)
         toilet_sorted = sorted(results, key=lambda r:r["wk16"])[:4]
@@ -542,8 +544,8 @@ def fetch_playoff_data():
         # Create toilet bowl data for Week 15 (all wildcard teams except the winner)
         toilet_bowl_teams = [r for r in wildcard_list if r is not wildcard_winner]
         
-        # Fix the playoff result logic - top 3 should get Conf Champ
-        playoff_result_sorted = sorted(playoff_comb, key=lambda r: r["combined"], reverse=True)
+        # Divisional Round result logic - top 3 by Week 15 score only (no aggregate)
+        playoff_result_sorted = sorted(playoff_comb, key=lambda r: r["wk15"], reverse=True)
         
         # Build week15 data first
         week15_data = {
@@ -564,7 +566,7 @@ def fetch_playoff_data():
                 {
                     'team': f"({t['orig_seed']}) {t['team']}",
                     'proj_score': fmt(calculate_projected_score(t, 15)),
-                    'score': fmt(t["combined"]),
+                    'score': fmt(t["wk15"]),
                     'next_week': "Conf Champ" if idx < 3 else "Purgatory",
                     'payout': get_payout(t, 15)
                 } for idx, t in enumerate(playoff_result_sorted)
@@ -668,7 +670,7 @@ def fetch_playoff_data():
             'week14': {
                 'bye': [{'team': f"({top_bye['orig_seed']}) {top_bye['team']}", 'score': fmt(top_bye["wk14"])}, 
                        {'team': f"({low_bye['orig_seed']}) {low_bye['team']}", 'score': fmt(low_bye["wk14"])}],
-                'playoff': [{'team': f"({t['orig_seed']}) {t['team']}", 'score': fmt(t["wk14"])} for t in playoff_list[:4]],
+                'playoff': [{'team': f"({t['orig_seed']}) {t['team']}", 'score': 'Bye Week'} for t in playoff_list[:4]],
                 'wildcard': [{'team': f"({t['orig_seed']}) {t['team']}", 'score': fmt(t["wk14"])} for t in wildcard_list]
             },
             'week15': week15_data,
@@ -780,7 +782,7 @@ def background_update():
     """Background thread to continuously update data"""
     while True:
         fetch_playoff_data()
-        time.sleep(3600)  # Update every hour
+        time.sleep(60)  # Update every 60 seconds
 
 @app.route('/')
 def index():
